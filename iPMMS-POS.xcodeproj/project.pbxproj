@@ -1,0 +1,301 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6384F3CA15D7D19F00B1054B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3C915D7D19F00B1054B /* UIKit.framework */; };
+		6384F3CC15D7D19F00B1054B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3CB15D7D19F00B1054B /* Foundation.framework */; };
+		6384F3CE15D7D19F00B1054B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3CD15D7D19F00B1054B /* CoreGraphics.framework */; };
+		6384F3D415D7D19F00B1054B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6384F3D215D7D19F00B1054B /* InfoPlist.strings */; };
+		6384F3D615D7D19F00B1054B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3D515D7D19F00B1054B /* main.m */; };
+		6384F3DA15D7D19F00B1054B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3D915D7D19F00B1054B /* AppDelegate.m */; };
+		6384F3DD15D7D19F00B1054B /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3DC15D7D19F00B1054B /* MasterViewController.m */; };
+		6384F3E015D7D19F00B1054B /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3DF15D7D19F00B1054B /* DetailViewController.m */; };
+		6384F3E315D7D19F00B1054B /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6384F3E115D7D19F00B1054B /* MasterViewController.xib */; };
+		6384F3E615D7D19F00B1054B /* DetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6384F3E415D7D19F00B1054B /* DetailViewController.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6384F3C515D7D19F00B1054B /* iPMMS-POS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iPMMS-POS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6384F3C915D7D19F00B1054B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		6384F3CB15D7D19F00B1054B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		6384F3CD15D7D19F00B1054B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		6384F3D115D7D19F00B1054B /* iPMMS-POS-Info.plist */ = {isa = PBXFileReference; path = "iPMMS-POS-Info.plist"; sourceTree = "<group>"; };
+		6384F3D315D7D19F00B1054B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		6384F3D515D7D19F00B1054B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6384F3D715D7D19F00B1054B /* iPMMS-POS-Prefix.pch */ = {isa = PBXFileReference; path = "iPMMS-POS-Prefix.pch"; sourceTree = "<group>"; };
+		6384F3D815D7D19F00B1054B /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		6384F3D915D7D19F00B1054B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		6384F3DB15D7D19F00B1054B /* MasterViewController.h */ = {isa = PBXFileReference; path = MasterViewController.h; sourceTree = "<group>"; };
+		6384F3DC15D7D19F00B1054B /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
+		6384F3DE15D7D19F00B1054B /* DetailViewController.h */ = {isa = PBXFileReference; path = DetailViewController.h; sourceTree = "<group>"; };
+		6384F3DF15D7D19F00B1054B /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
+		6384F3E215D7D19F00B1054B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MasterViewController.xib; sourceTree = "<group>"; };
+		6384F3E515D7D19F00B1054B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailViewController.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6384F3C215D7D19F00B1054B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6384F3CA15D7D19F00B1054B /* UIKit.framework in Frameworks */,
+				6384F3CC15D7D19F00B1054B /* Foundation.framework in Frameworks */,
+				6384F3CE15D7D19F00B1054B /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6384F3BA15D7D19E00B1054B = {
+			isa = PBXGroup;
+			children = (
+				6384F3CF15D7D19F00B1054B /* iPMMS-POS */,
+				6384F3C815D7D19F00B1054B /* Frameworks */,
+				6384F3C615D7D19F00B1054B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6384F3C615D7D19F00B1054B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6384F3C515D7D19F00B1054B /* iPMMS-POS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6384F3C815D7D19F00B1054B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6384F3C915D7D19F00B1054B /* UIKit.framework */,
+				6384F3CB15D7D19F00B1054B /* Foundation.framework */,
+				6384F3CD15D7D19F00B1054B /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6384F3CF15D7D19F00B1054B /* iPMMS-POS */ = {
+			isa = PBXGroup;
+			children = (
+				6384F3D815D7D19F00B1054B /* AppDelegate.h */,
+				6384F3D915D7D19F00B1054B /* AppDelegate.m */,
+				6384F3DB15D7D19F00B1054B /* MasterViewController.h */,
+				6384F3DC15D7D19F00B1054B /* MasterViewController.m */,
+				6384F3DE15D7D19F00B1054B /* DetailViewController.h */,
+				6384F3DF15D7D19F00B1054B /* DetailViewController.m */,
+				6384F3E115D7D19F00B1054B /* MasterViewController.xib */,
+				6384F3E415D7D19F00B1054B /* DetailViewController.xib */,
+				6384F3D015D7D19F00B1054B /* Supporting Files */,
+			);
+			path = "iPMMS-POS";
+			sourceTree = "<group>";
+		};
+		6384F3D015D7D19F00B1054B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				6384F3D115D7D19F00B1054B /* iPMMS-POS-Info.plist */,
+				6384F3D215D7D19F00B1054B /* InfoPlist.strings */,
+				6384F3D515D7D19F00B1054B /* main.m */,
+				6384F3D715D7D19F00B1054B /* iPMMS-POS-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6384F3C415D7D19F00B1054B /* iPMMS-POS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6384F3E915D7D19F00B1054B /* Build configuration list for PBXNativeTarget "iPMMS-POS" */;
+			buildPhases = (
+				6384F3C115D7D19F00B1054B /* Sources */,
+				6384F3C215D7D19F00B1054B /* Frameworks */,
+				6384F3C315D7D19F00B1054B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "iPMMS-POS";
+			productName = "iPMMS-POS";
+			productReference = 6384F3C515D7D19F00B1054B /* iPMMS-POS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6384F3BC15D7D19E00B1054B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 6384F3BF15D7D19E00B1054B /* Build configuration list for PBXProject "iPMMS-POS" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 6384F3BA15D7D19E00B1054B;
+			productRefGroup = 6384F3C615D7D19F00B1054B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6384F3C415D7D19F00B1054B /* iPMMS-POS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6384F3C315D7D19F00B1054B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6384F3D415D7D19F00B1054B /* InfoPlist.strings in Resources */,
+				6384F3E315D7D19F00B1054B /* MasterViewController.xib in Resources */,
+				6384F3E615D7D19F00B1054B /* DetailViewController.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6384F3C115D7D19F00B1054B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6384F3D615D7D19F00B1054B /* main.m in Sources */,
+				6384F3DA15D7D19F00B1054B /* AppDelegate.m in Sources */,
+				6384F3DD15D7D19F00B1054B /* MasterViewController.m in Sources */,
+				6384F3E015D7D19F00B1054B /* DetailViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		6384F3D215D7D19F00B1054B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6384F3D315D7D19F00B1054B /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		6384F3E115D7D19F00B1054B /* MasterViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6384F3E215D7D19F00B1054B /* en */,
+			);
+			name = MasterViewController.xib;
+			sourceTree = "<group>";
+		};
+		6384F3E415D7D19F00B1054B /* DetailViewController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6384F3E515D7D19F00B1054B /* en */,
+			);
+			name = DetailViewController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		6384F3E715D7D19F00B1054B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+			};
+			name = Debug;
+		};
+		6384F3E815D7D19F00B1054B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6384F3EA15D7D19F00B1054B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iPMMS-POS/iPMMS-POS-Prefix.pch";
+				INFOPLIST_FILE = "iPMMS-POS/iPMMS-POS-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		6384F3EB15D7D19F00B1054B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iPMMS-POS/iPMMS-POS-Prefix.pch";
+				INFOPLIST_FILE = "iPMMS-POS/iPMMS-POS-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6384F3BF15D7D19E00B1054B /* Build configuration list for PBXProject "iPMMS-POS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6384F3E715D7D19F00B1054B /* Debug */,
+				6384F3E815D7D19F00B1054B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6384F3E915D7D19F00B1054B /* Build configuration list for PBXNativeTarget "iPMMS-POS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6384F3EA15D7D19F00B1054B /* Debug */,
+				6384F3EB15D7D19F00B1054B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6384F3BC15D7D19E00B1054B /* Project object */;
+}
