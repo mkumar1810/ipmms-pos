@@ -7,35 +7,76 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6384933915D8DB8300105697 /* locationSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384933815D8DB8300105697 /* locationSearch.m */; };
+		6384933E15D8E12D00105697 /* gymrichlogo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6384933B15D8E12D00105697 /* gymrichlogo.jpg */; };
+		6384933F15D8E12D00105697 /* newlogin.png in Resources */ = {isa = PBXBuildFile; fileRef = 6384933C15D8E12D00105697 /* newlogin.png */; };
+		6384934015D8E12D00105697 /* pwdbg.png in Resources */ = {isa = PBXBuildFile; fileRef = 6384933D15D8E12D00105697 /* pwdbg.png */; };
+		6384934315D8FF9900105697 /* itemAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384934215D8FF9900105697 /* itemAdd.m */; };
 		6384F3CA15D7D19F00B1054B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3C915D7D19F00B1054B /* UIKit.framework */; };
 		6384F3CC15D7D19F00B1054B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3CB15D7D19F00B1054B /* Foundation.framework */; };
 		6384F3CE15D7D19F00B1054B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3CD15D7D19F00B1054B /* CoreGraphics.framework */; };
 		6384F3D415D7D19F00B1054B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6384F3D215D7D19F00B1054B /* InfoPlist.strings */; };
 		6384F3D615D7D19F00B1054B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3D515D7D19F00B1054B /* main.m */; };
 		6384F3DA15D7D19F00B1054B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3D915D7D19F00B1054B /* AppDelegate.m */; };
-		6384F3DD15D7D19F00B1054B /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3DC15D7D19F00B1054B /* MasterViewController.m */; };
-		6384F3E015D7D19F00B1054B /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3DF15D7D19F00B1054B /* DetailViewController.m */; };
-		6384F3E315D7D19F00B1054B /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6384F3E115D7D19F00B1054B /* MasterViewController.xib */; };
-		6384F3E615D7D19F00B1054B /* DetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6384F3E415D7D19F00B1054B /* DetailViewController.xib */; };
+		6384F40215D7E15A00B1054B /* itemNavigator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F40015D7E15A00B1054B /* itemNavigator.m */; };
+		6384F40315D7E15A00B1054B /* itemNavigator.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6384F40115D7E15A00B1054B /* itemNavigator.xib */; };
+		6386100E15D8C3890057297B /* posItemSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386100D15D8C3890057297B /* posItemSearch.m */; };
+		6386101515D8C3D90057297B /* baseSearchForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386101215D8C3D90057297B /* baseSearchForm.m */; };
+		6386101615D8C3D90057297B /* getSearch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6386101415D8C3D90057297B /* getSearch.xib */; };
+		6386101915D8C4020057297B /* posWSProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386101815D8C4020057297B /* posWSProxy.m */; };
+		6386101D15D8C6190057297B /* posBill.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386101B15D8C6190057297B /* posBill.m */; };
+		6386101E15D8C6190057297B /* posBill.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6386101C15D8C6190057297B /* posBill.xib */; };
+		6386102915D8C8000057297B /* login.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386102115D8C8000057297B /* login.m */; };
+		6386102A15D8C8000057297B /* login.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6386102215D8C8000057297B /* login.xib */; };
+		6386102B15D8C8000057297B /* signIn.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386102415D8C8000057297B /* signIn.m */; };
+		6386102C15D8C8000057297B /* signIn.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6386102515D8C8000057297B /* signIn.xib */; };
+		6386102D15D8C8000057297B /* signOut.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386102715D8C8000057297B /* signOut.m */; };
+		6386102E15D8C8000057297B /* signOut.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6386102815D8C8000057297B /* signOut.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6384933215D8CCB700105697 /* posFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = posFunctions.h; path = "../../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/POSBilling/posFunctions.h"; sourceTree = "<group>"; };
+		6384933715D8DB8300105697 /* locationSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = locationSearch.h; sourceTree = "<group>"; };
+		6384933815D8DB8300105697 /* locationSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = locationSearch.m; sourceTree = "<group>"; };
+		6384933B15D8E12D00105697 /* gymrichlogo.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = gymrichlogo.jpg; sourceTree = "<group>"; };
+		6384933C15D8E12D00105697 /* newlogin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = newlogin.png; sourceTree = "<group>"; };
+		6384933D15D8E12D00105697 /* pwdbg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pwdbg.png; sourceTree = "<group>"; };
+		6384934115D8FF9900105697 /* itemAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itemAdd.h; sourceTree = "<group>"; };
+		6384934215D8FF9900105697 /* itemAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = itemAdd.m; sourceTree = "<group>"; };
 		6384F3C515D7D19F00B1054B /* iPMMS-POS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iPMMS-POS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6384F3C915D7D19F00B1054B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6384F3CB15D7D19F00B1054B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6384F3CD15D7D19F00B1054B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		6384F3D115D7D19F00B1054B /* iPMMS-POS-Info.plist */ = {isa = PBXFileReference; path = "iPMMS-POS-Info.plist"; sourceTree = "<group>"; };
+		6384F3D115D7D19F00B1054B /* iPMMS-POS-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "iPMMS-POS-Info.plist"; sourceTree = "<group>"; };
 		6384F3D315D7D19F00B1054B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6384F3D515D7D19F00B1054B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		6384F3D715D7D19F00B1054B /* iPMMS-POS-Prefix.pch */ = {isa = PBXFileReference; path = "iPMMS-POS-Prefix.pch"; sourceTree = "<group>"; };
-		6384F3D815D7D19F00B1054B /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		6384F3D715D7D19F00B1054B /* iPMMS-POS-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "iPMMS-POS-Prefix.pch"; sourceTree = "<group>"; };
+		6384F3D815D7D19F00B1054B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		6384F3D915D7D19F00B1054B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		6384F3DB15D7D19F00B1054B /* MasterViewController.h */ = {isa = PBXFileReference; path = MasterViewController.h; sourceTree = "<group>"; };
-		6384F3DC15D7D19F00B1054B /* MasterViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MasterViewController.m; sourceTree = "<group>"; };
-		6384F3DE15D7D19F00B1054B /* DetailViewController.h */ = {isa = PBXFileReference; path = DetailViewController.h; sourceTree = "<group>"; };
-		6384F3DF15D7D19F00B1054B /* DetailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
-		6384F3E215D7D19F00B1054B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MasterViewController.xib; sourceTree = "<group>"; };
-		6384F3E515D7D19F00B1054B /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DetailViewController.xib; sourceTree = "<group>"; };
+		6384F3FF15D7E15A00B1054B /* itemNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itemNavigator.h; sourceTree = "<group>"; };
+		6384F40015D7E15A00B1054B /* itemNavigator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = itemNavigator.m; sourceTree = "<group>"; };
+		6384F40115D7E15A00B1054B /* itemNavigator.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = itemNavigator.xib; sourceTree = "<group>"; };
+		6386100C15D8C3890057297B /* posItemSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posItemSearch.h; sourceTree = "<group>"; };
+		6386100D15D8C3890057297B /* posItemSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = posItemSearch.m; sourceTree = "<group>"; };
+		6386101015D8C3D90057297B /* baseProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseProtocol.h; sourceTree = "<group>"; };
+		6386101115D8C3D90057297B /* baseSearchForm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseSearchForm.h; sourceTree = "<group>"; };
+		6386101215D8C3D90057297B /* baseSearchForm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = baseSearchForm.m; sourceTree = "<group>"; };
+		6386101315D8C3D90057297B /* defaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = defaults.h; sourceTree = "<group>"; };
+		6386101415D8C3D90057297B /* getSearch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = getSearch.xib; sourceTree = "<group>"; };
+		6386101715D8C4020057297B /* posWSProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posWSProxy.h; sourceTree = "<group>"; };
+		6386101815D8C4020057297B /* posWSProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = posWSProxy.m; sourceTree = "<group>"; };
+		6386101A15D8C6190057297B /* posBill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = posBill.h; path = "../../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/POSBilling/posBill.h"; sourceTree = "<group>"; };
+		6386101B15D8C6190057297B /* posBill.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = posBill.m; path = "../../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/POSBilling/posBill.m"; sourceTree = "<group>"; };
+		6386101C15D8C6190057297B /* posBill.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = posBill.xib; path = "../../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/POSBilling/posBill.xib"; sourceTree = "<group>"; };
+		6386102015D8C8000057297B /* login.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = login.h; sourceTree = "<group>"; };
+		6386102115D8C8000057297B /* login.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = login.m; sourceTree = "<group>"; };
+		6386102215D8C8000057297B /* login.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = login.xib; sourceTree = "<group>"; };
+		6386102315D8C8000057297B /* signIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = signIn.h; sourceTree = "<group>"; };
+		6386102415D8C8000057297B /* signIn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = signIn.m; sourceTree = "<group>"; };
+		6386102515D8C8000057297B /* signIn.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = signIn.xib; sourceTree = "<group>"; };
+		6386102615D8C8000057297B /* signOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = signOut.h; sourceTree = "<group>"; };
+		6386102715D8C8000057297B /* signOut.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = signOut.m; sourceTree = "<group>"; };
+		6386102815D8C8000057297B /* signOut.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = signOut.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +93,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6384933A15D8E12D00105697 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				6384933B15D8E12D00105697 /* gymrichlogo.jpg */,
+				6384933C15D8E12D00105697 /* newlogin.png */,
+				6384933D15D8E12D00105697 /* pwdbg.png */,
+			);
+			name = images;
+			path = "../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/images";
+			sourceTree = "<group>";
+		};
 		6384F3BA15D7D19E00B1054B = {
 			isa = PBXGroup;
 			children = (
@@ -82,14 +134,13 @@
 		6384F3CF15D7D19F00B1054B /* iPMMS-POS */ = {
 			isa = PBXGroup;
 			children = (
+				6384933A15D8E12D00105697 /* images */,
+				6386101F15D8C8000057297B /* security */,
+				6386100F15D8C3D90057297B /* Utilities */,
+				6386100A15D8C3710057297B /* SharedItems */,
+				6384F3FE15D7E14800B1054B /* POSBilling */,
 				6384F3D815D7D19F00B1054B /* AppDelegate.h */,
 				6384F3D915D7D19F00B1054B /* AppDelegate.m */,
-				6384F3DB15D7D19F00B1054B /* MasterViewController.h */,
-				6384F3DC15D7D19F00B1054B /* MasterViewController.m */,
-				6384F3DE15D7D19F00B1054B /* DetailViewController.h */,
-				6384F3DF15D7D19F00B1054B /* DetailViewController.m */,
-				6384F3E115D7D19F00B1054B /* MasterViewController.xib */,
-				6384F3E415D7D19F00B1054B /* DetailViewController.xib */,
 				6384F3D015D7D19F00B1054B /* Supporting Files */,
 			);
 			path = "iPMMS-POS";
@@ -104,6 +155,66 @@
 				6384F3D715D7D19F00B1054B /* iPMMS-POS-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6384F3FE15D7E14800B1054B /* POSBilling */ = {
+			isa = PBXGroup;
+			children = (
+				6384F3FF15D7E15A00B1054B /* itemNavigator.h */,
+				6384F40015D7E15A00B1054B /* itemNavigator.m */,
+				6384F40115D7E15A00B1054B /* itemNavigator.xib */,
+				6386101A15D8C6190057297B /* posBill.h */,
+				6386101B15D8C6190057297B /* posBill.m */,
+				6386101C15D8C6190057297B /* posBill.xib */,
+				6384933215D8CCB700105697 /* posFunctions.h */,
+			);
+			path = POSBilling;
+			sourceTree = "<group>";
+		};
+		6386100A15D8C3710057297B /* SharedItems */ = {
+			isa = PBXGroup;
+			children = (
+				6384933715D8DB8300105697 /* locationSearch.h */,
+				6384933815D8DB8300105697 /* locationSearch.m */,
+				6386100C15D8C3890057297B /* posItemSearch.h */,
+				6386100D15D8C3890057297B /* posItemSearch.m */,
+				6384934115D8FF9900105697 /* itemAdd.h */,
+				6384934215D8FF9900105697 /* itemAdd.m */,
+			);
+			name = SharedItems;
+			path = "../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/SharedItems";
+			sourceTree = "<group>";
+		};
+		6386100F15D8C3D90057297B /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				6386101015D8C3D90057297B /* baseProtocol.h */,
+				6386101115D8C3D90057297B /* baseSearchForm.h */,
+				6386101215D8C3D90057297B /* baseSearchForm.m */,
+				6386101315D8C3D90057297B /* defaults.h */,
+				6386101415D8C3D90057297B /* getSearch.xib */,
+				6386101715D8C4020057297B /* posWSProxy.h */,
+				6386101815D8C4020057297B /* posWSProxy.m */,
+			);
+			name = Utilities;
+			path = "../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/Utilities";
+			sourceTree = "<group>";
+		};
+		6386101F15D8C8000057297B /* security */ = {
+			isa = PBXGroup;
+			children = (
+				6386102015D8C8000057297B /* login.h */,
+				6386102115D8C8000057297B /* login.m */,
+				6386102215D8C8000057297B /* login.xib */,
+				6386102315D8C8000057297B /* signIn.h */,
+				6386102415D8C8000057297B /* signIn.m */,
+				6386102515D8C8000057297B /* signIn.xib */,
+				6386102615D8C8000057297B /* signOut.h */,
+				6386102715D8C8000057297B /* signOut.m */,
+				6386102815D8C8000057297B /* signOut.xib */,
+			);
+			name = security;
+			path = "../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/security";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -157,8 +268,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				6384F3D415D7D19F00B1054B /* InfoPlist.strings in Resources */,
-				6384F3E315D7D19F00B1054B /* MasterViewController.xib in Resources */,
-				6384F3E615D7D19F00B1054B /* DetailViewController.xib in Resources */,
+				6384F40315D7E15A00B1054B /* itemNavigator.xib in Resources */,
+				6386101615D8C3D90057297B /* getSearch.xib in Resources */,
+				6386101E15D8C6190057297B /* posBill.xib in Resources */,
+				6386102A15D8C8000057297B /* login.xib in Resources */,
+				6386102C15D8C8000057297B /* signIn.xib in Resources */,
+				6386102E15D8C8000057297B /* signOut.xib in Resources */,
+				6384933E15D8E12D00105697 /* gymrichlogo.jpg in Resources */,
+				6384933F15D8E12D00105697 /* newlogin.png in Resources */,
+				6384934015D8E12D00105697 /* pwdbg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -171,8 +289,16 @@
 			files = (
 				6384F3D615D7D19F00B1054B /* main.m in Sources */,
 				6384F3DA15D7D19F00B1054B /* AppDelegate.m in Sources */,
-				6384F3DD15D7D19F00B1054B /* MasterViewController.m in Sources */,
-				6384F3E015D7D19F00B1054B /* DetailViewController.m in Sources */,
+				6384F40215D7E15A00B1054B /* itemNavigator.m in Sources */,
+				6386100E15D8C3890057297B /* posItemSearch.m in Sources */,
+				6386101515D8C3D90057297B /* baseSearchForm.m in Sources */,
+				6386101915D8C4020057297B /* posWSProxy.m in Sources */,
+				6386101D15D8C6190057297B /* posBill.m in Sources */,
+				6386102915D8C8000057297B /* login.m in Sources */,
+				6386102B15D8C8000057297B /* signIn.m in Sources */,
+				6386102D15D8C8000057297B /* signOut.m in Sources */,
+				6384933915D8DB8300105697 /* locationSearch.m in Sources */,
+				6384934315D8FF9900105697 /* itemAdd.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,22 +311,6 @@
 				6384F3D315D7D19F00B1054B /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		6384F3E115D7D19F00B1054B /* MasterViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6384F3E215D7D19F00B1054B /* en */,
-			);
-			name = MasterViewController.xib;
-			sourceTree = "<group>";
-		};
-		6384F3E415D7D19F00B1054B /* DetailViewController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6384F3E515D7D19F00B1054B /* en */,
-			);
-			name = DetailViewController.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -294,6 +404,7 @@
 				6384F3EB15D7D19F00B1054B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
