@@ -7,8 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "signIn.h"
+
+@class signIn;
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
+{
+     UINavigationController *nav;    
+}
 
 @property (strong, nonatomic) UIWindow *window;
 

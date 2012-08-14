@@ -8,9 +8,9 @@
 
 #import "AppDelegate.h"
 
-#import "MasterViewController.h"
+#import "itemNavigator.h"
 
-#import "DetailViewController.h"
+#import "posBill.h"
 
 @implementation AppDelegate
 
@@ -19,19 +19,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginSucceeded:) name:@"loginSucceeded" object:nil];
+    
+    nav=[[UINavigationController alloc]init];
+    nav.navigationBar.hidden=YES;
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
-
-    MasterViewController *masterViewController = [[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil];
-    UINavigationController *masterNavigationController = [[UINavigationController alloc] initWithRootViewController:masterViewController];
-
-    DetailViewController *detailViewController = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
-    UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:detailViewController];
-
-    self.splitViewController = [[UISplitViewController alloc] init];
-    self.splitViewController.delegate = detailViewController;
-    self.splitViewController.viewControllers = [NSArray arrayWithObjects:masterNavigationController, detailNavigationController, nil];
-    self.window.rootViewController = self.splitViewController;
+    signIn *signin=[[signIn alloc]initWithNotificationName:@"loginSuccessful"];
+    [nav pushViewController:signin animated:YES];
+    self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -73,6 +68,24 @@
      Save data if appropriate.
      See also applicationDidEnterBackground:.
      */
+}
+
+- (void) loginSucceeded : (NSNotification*) loginInfo
+{
+    itemNavigator *itemBrowse = [[itemNavigator alloc] initWithNibName:@"itemNavigator" bundle:nil];
+    UINavigationController *masterNavigationController = [[UINavigationController alloc] initWithRootViewController:itemBrowse];
+    
+    
+    posBill *billTransaction = [[posBill alloc] initWithNibName:@"posBill" bundle:nil]; 
+    UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:billTransaction];
+    
+    itemBrowse.posBillTransaction = billTransaction;
+    
+    self.splitViewController = [[UISplitViewController alloc] init];
+    self.splitViewController.delegate = billTransaction;
+    self.splitViewController.viewControllers = [NSArray arrayWithObjects:masterNavigationController , detailNavigationController, nil];
+    self.window.rootViewController = self.splitViewController;
+    [self.window makeKeyAndVisible];
 }
 
 @end
