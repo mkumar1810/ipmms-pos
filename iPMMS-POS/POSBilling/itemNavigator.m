@@ -59,7 +59,15 @@
 
 - (void) searchItemNavigationReturn:(NSNotification *)itemInfo
 {
-    
+    [_billTransaction posItemSelectedInSearch:[[itemInfo userInfo] valueForKey:@"data"]];
+    /*currDict =[[NSDictionary alloc] initWithDictionary:[[memberInfo userInfo] valueForKey:@"data"]];
+    //NSLog(@"curr dict returned %@ and curr mode is %@", currDict,currMode);
+    if (!([currMode isEqualToString:@"I"] | [currMode isEqualToString:@"U"])) 
+    {
+        if (currDict) 
+            [self setListMode:currDict];
+    }
+    [self setViewResizedForOrientation:currOrientation];*/
 }
 
 - (void) generateItemsList

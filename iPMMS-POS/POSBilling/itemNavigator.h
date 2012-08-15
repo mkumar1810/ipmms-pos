@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "posItemSearch.h"
+#import "posFunctions.h"
+#import "posBill.h"
 
-@class posBill;
-
-@interface itemNavigator : UIViewController
+@interface itemNavigator : UIViewController <posFunctions>
 {
     posItemSearch *positemSelect;
     UIInterfaceOrientation currOrientation;
@@ -21,8 +21,6 @@
 @property (strong, nonatomic) posBill *posBillTransaction;
 
 - (void) generateItemsList;
-- (void) initialize;
-- (id) getButtonForNavigation:(NSString*) p_btnTask;
-- (void) setButtonsForDiffMode;
+
 
 @end
