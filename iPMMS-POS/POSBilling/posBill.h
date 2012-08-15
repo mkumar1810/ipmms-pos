@@ -31,9 +31,11 @@
 - (UITableViewCell*) getCellForRow:(int) p_rowNo;
 - (NSString*) getDisplayData:(NSString*) p_curDisplay;
 - (int) getOperationMode:(NSString*) p_curDisplay;
-- (int) getSalesReturnQty:(NSString*) p_curDisplay withTrans:(NSString*) p_transNature;
+- (int) getQtyFromDisplay:(NSString*) p_curDisplay withTrans:(NSString*) p_transNature;
+- (double) getAmtFromDisplay:(NSString*) p_curDisplay withTrans:(NSString*) p_transNature;
 - (void) showAlertMessage:(NSString *) dispMessage;
 - (void) addNewItemToGrid:(NSString*) p_transType withQty:(int) p_transQty andTransSign:(int) p_transSign;
+- (void) addNewAmountToGrid:(NSString*) p_transType withAmt:(double) p_transAmt andTransSign:(int) p_transSign;
 - (void) setSummaryFieldAndBalance;
 - (void) getVoidConfirmation;
 - (void) processVoidTransaction;
