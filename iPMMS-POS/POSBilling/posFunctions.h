@@ -11,7 +11,14 @@
 @protocol posFunctions <NSObject>
 
 @optional
+- (void) initialize;
 - (IBAction) ButtonPressed:(id)sender;
-
+- (IBAction) entryButtonsPressed :(id)sender;
+- (IBAction) actionButtonPressed:(id)sender;
+- (IBAction) confirmButtonPressed :(id)sender;
+- (void) generateTableView;
+- (id) getButtonForNavigation:(NSString*) p_btnTask;
+- (void) setButtonsForDiffMode;
+- (void) posItemSelectedInSearch:(NSDictionary*) p_itemDict;
 
 @end

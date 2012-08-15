@@ -118,11 +118,28 @@
 {
     UIButton *btnEntryclicked = (UIButton*) sender;
     NSString *entryButtonTitle = [NSString stringWithString:btnEntryclicked.titleLabel.text];
+    NSString *newResString;
     if (transModeVal==1 | transModeVal==2 | transModeVal==3) 
     {
         if (itemDict) 
         {
             if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
+                posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
+        }
+        return;
+    }
+    if (transModeVal==4 | transModeVal==5 | transModeVal==6) 
+    {
+        if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"] | [entryButtonTitle isEqualToString:@"."]) 
+        {
+            newResString = [NSString stringWithFormat:@"%@", posDisplay.text]; 
+            if ([entryButtonTitle isEqualToString:@"."]) 
+            {
+                NSRange decimalRange = [newResString rangeOfString:entryButtonTitle options:NSCaseInsensitiveSearch];
+                if (decimalRange.location == NSNotFound) 
+                    posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
+            }
+            else
                 posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
         }
     }
@@ -133,27 +150,30 @@
     UIButton *btnClicked = (UIButton*) sender;
     NSString *btnLabel = [NSString stringWithString:btnClicked.titleLabel.text];
     if ([currMode isEqualToString:@"I"]) 
+    {
         posDisplay.text =[[NSString alloc] initWithFormat:@"%@*", btnClicked.titleLabel.text];
-    if ([btnLabel isEqualToString:@"Sales"]) 
-        transModeVal = 1;
-    else if ([btnLabel isEqualToString:@"Return"])
-        transModeVal = 2;
-    else if ([btnLabel isEqualToString:@"Void"])
-        //transModeVal = 3;
-        [self getVoidConfirmation];
-    else if ([btnLabel isEqualToString:@"Add"])
-        transModeVal = 4;
-    else if ([btnLabel isEqualToString:@"Less"])
-        transModeVal = 5;
-    else if ([btnLabel isEqualToString:@"Cash"])
-        transModeVal = 6;
-    else if ([btnLabel isEqualToString:@"Member"])
-        transModeVal = 7;
-    else if ([btnLabel isEqualToString:@"Cheque"])
-        transModeVal = 8;
-    else if ([btnLabel isEqualToString:@"Card"])
-        transModeVal = 9;
+        if ([btnLabel isEqualToString:@"Sales"]) 
+            transModeVal = 1;
+        else if ([btnLabel isEqualToString:@"Return"])
+            transModeVal = 2;
+        else if ([btnLabel isEqualToString:@"Void"])
+            [self getVoidConfirmation];
+        else if ([btnLabel isEqualToString:@"Add"])
+            transModeVal = 4;
+        else if ([btnLabel isEqualToString:@"Less"])
+            transModeVal = 5;
+        else if ([btnLabel isEqualToString:@"Cash"])
+            transModeVal = 6;
+        else if ([btnLabel isEqualToString:@"Member"])
+            transModeVal = 7;
+        else if ([btnLabel isEqualToString:@"Cheque"])
+            transModeVal = 8;
+        else if ([btnLabel isEqualToString:@"Card"])
+            transModeVal = 9;
+        itemDict = nil;
+    }
 }
+
 
 - (void) getVoidConfirmation
 {
@@ -239,18 +259,19 @@
 - (IBAction) confirmButtonPressed :(id)sender
 {
     int l_transQty = 0;
+    double l_transAmt = 0;
     if ([currMode isEqualToString:@"I"]) 
     {
         //int l_opMode =[self getOperationMode:posDisplay.text];
         switch (transModeVal) 
         {
-            case 1:
+            case 1: // sales transaction
                 if (!itemDict) 
                 {
                     [self showAlertMessage:@"Select a valid item"];
                     return;
                 }
-                l_transQty = [self getSalesReturnQty:posDisplay.text withTrans:@"Sales"];
+                l_transQty = [self getQtyFromDisplay:posDisplay.text withTrans:@"Sales"];
                 if (l_transQty==0) 
                     [self showAlertMessage:@"Quantity is not valid"];
                 else
@@ -261,13 +282,13 @@
                     transModeVal = 1;
                 }
                 break;
-            case 2:
+            case 2: // return transaction
                 if (!itemDict) 
                 {
                     [self showAlertMessage:@"Select a valid item"];
                     return;
                 }
-                l_transQty = [self getSalesReturnQty:posDisplay.text withTrans:@"Return"];
+                l_transQty = [self getQtyFromDisplay:posDisplay.text withTrans:@"Return"];
                 if (l_transQty==0) 
                     [self showAlertMessage:@"Quantity is not valid"];
                 else
@@ -278,7 +299,45 @@
                     transModeVal = 1;
                 }
                 break;
-                
+            case 4:
+                l_transAmt = [self getAmtFromDisplay:posDisplay.text withTrans:@"Add"];
+                if (l_transAmt==0) 
+                    [self showAlertMessage:@"Amount is not valid"];
+                else
+                {
+                    //[self addNewItemToGrid:@"Cash" withQty:l_transQty andTransSign:-1];
+                    [self addNewAmountToGrid:@"Add" withAmt:l_transAmt andTransSign:-1];
+                    itemDict = nil;
+                    posDisplay.text = @"Sales*";
+                    transModeVal = 1;
+                }
+                break;
+            case 5:
+                l_transAmt = [self getAmtFromDisplay:posDisplay.text withTrans:@"Less"];
+                if (l_transAmt==0) 
+                    [self showAlertMessage:@"Amount is not valid"];
+                else
+                {
+                    //[self addNewItemToGrid:@"Cash" withQty:l_transQty andTransSign:-1];
+                    [self addNewAmountToGrid:@"Less" withAmt:l_transAmt andTransSign:-1];
+                    itemDict = nil;
+                    posDisplay.text = @"Sales*";
+                    transModeVal = 1;
+                }
+                break;
+            case 6: // cash transaction
+                l_transAmt = [self getAmtFromDisplay:posDisplay.text withTrans:@"Cash"];
+                if (l_transAmt==0) 
+                    [self showAlertMessage:@"Amount is not valid"];
+                else
+                {
+                    //[self addNewItemToGrid:@"Cash" withQty:l_transQty andTransSign:-1];
+                    [self addNewAmountToGrid:@"Cash" withAmt:l_transAmt andTransSign:-1];
+                    itemDict = nil;
+                    posDisplay.text = @"Sales*";
+                    transModeVal = 1;
+                }
+                break;
             default:
                 break;
         }
@@ -295,6 +354,18 @@
     NSArray *indexArray = [NSArray arrayWithObjects:newPath, nil];
     [posTranView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationNone];
     [posTranView selectRowAtIndexPath:newPath animated:NO scrollPosition:UITableViewScrollPositionBottom];
+}
+
+- (void) addNewAmountToGrid:(NSString*) p_transType withAmt:(double) p_transAmt andTransSign:(int) p_transSign
+{
+    NSDictionary *dictForDisp = [NSDictionary dictionaryWithObjectsAndKeys:p_transType, @"OPERATION", p_transType , @"DESCRIPTION", 
+                                 [NSNumber numberWithDouble:p_transAmt], @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY", [NSNumber numberWithDouble:p_transAmt], @"AMOUNT",[NSString stringWithString:@"0"] , @"POSITEMID",[NSString stringWithFormat:@"%d",p_transSign], @"TRANSSIGN" , nil];
+    [dataForDisplay addObject:dictForDisp];
+    NSIndexPath *newPath = [NSIndexPath indexPathForRow:[dataForDisplay count] inSection:0];
+    NSArray *indexArray = [NSArray arrayWithObjects:newPath, nil];
+    [posTranView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationNone];
+    [posTranView selectRowAtIndexPath:newPath animated:NO scrollPosition:UITableViewScrollPositionBottom];
+    
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -427,7 +498,7 @@
     lbl1.text =[NSString stringWithFormat:@"%d", p_rowNo];
     
     lbl2 = (UILabel*) [cell.contentView viewWithTag:2];
-    lbl2.text = [NSString stringWithFormat:@"%@", [tmpDict valueForKey:@"DESCRIPTION"]];
+    lbl2.text = [NSString stringWithFormat:@" %@", [tmpDict valueForKey:@"DESCRIPTION"]];
     
     lbl3 = (UILabel*) [cell.contentView viewWithTag:3];
     //[frm setMaximumFractionDigits:0];
@@ -442,13 +513,13 @@
     else if ([opType isEqualToString:@"Return"])
         lblColor = [UIColor colorWithRed:185.0f/255.0f green:153.0f/255.0f blue:93.0f/255.0f alpha:1.0];
     else if ([opType isEqualToString:@"Void"])
-        lblColor = [UIColor colorWithRed:165.0f/255.0f green:173.0f/255.0f blue:123.0f/255.0f alpha:1.0];
+        lblColor = [UIColor colorWithRed:155.0f/255.0f green:173.0f/255.0f blue:123.0f/255.0f alpha:1.0];
     else if ([opType isEqualToString:@"Add"])
-        lblColor = [UIColor colorWithRed:205.0f/255.0f green:133.0f/255.0f blue:63.0f/255.0f alpha:1.0];
+        lblColor = [UIColor colorWithRed:225.0/255.0f green:193.0f/255.0f blue:153.0f/255.0f alpha:1.0];
     else if ([opType isEqualToString:@"Less"])
-        lblColor = [UIColor colorWithRed:205.0f/255.0f green:133.0f/255.0f blue:63.0f/255.0f alpha:1.0];
+        lblColor = [UIColor colorWithRed:195.0f/255.0f green:213.0f/255.0f blue:183.0f/255.0f alpha:1.0];
     else if ([opType isEqualToString:@"Cash"])
-        lblColor = [UIColor colorWithRed:205.0f/255.0f green:133.0f/255.0f blue:63.0f/255.0f alpha:1.0];
+        lblColor = [UIColor colorWithRed:125.0f/255.0f green:233.0f/255.0f blue:213.0f/255.0f alpha:1.0];
     else if ([opType isEqualToString:@"Member"])
         lblColor = [UIColor colorWithRed:205.0f/255.0f green:133.0f/255.0f blue:63.0f/255.0f alpha:1.0];
     else if ([opType isEqualToString:@"Cheque"])
@@ -632,7 +703,7 @@
     return l_retString;
 }
 
-- (int) getSalesReturnQty:(NSString*) p_curDisplay withTrans:(NSString*) p_transNature
+- (int) getQtyFromDisplay:(NSString*) p_curDisplay withTrans:(NSString*) p_transNature
 {
     NSString *itemDesc  = [[NSString alloc] initWithFormat:@"%@*%@*%@*", p_transNature ,[itemDict valueForKey:@"ITEMNAME"],[itemDict valueForKey:@"ITEMPRICE"]];
     NSString *restString = [p_curDisplay stringByReplacingOccurrencesOfString:itemDesc withString:@""];
@@ -640,6 +711,17 @@
         return 1;
     else
         return [restString intValue];
+    return 0;
+}
+
+- (double) getAmtFromDisplay:(NSString*) p_curDisplay withTrans:(NSString*) p_transNature
+{
+    NSString *itemDesc  = [[NSString alloc] initWithFormat:@"%@*", p_transNature];
+    NSString *restString = [p_curDisplay stringByReplacingOccurrencesOfString:itemDesc withString:@""];
+    if ([restString isEqualToString:@""]) 
+        return 0;
+    else
+        return [restString doubleValue];
     return 0;
 }
 
