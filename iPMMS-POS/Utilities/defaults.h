@@ -25,6 +25,12 @@
 #define LOCATIONS_URL @"/memberlist.asmx?op=LocationsData"
 #define POSITEMSLIST_URL @"/ipmms_pos.asmx?op=gymGetPosItems_pos"
 #define ITEMADDUPDATE_URL @"/ipmms_pos.asmx?op=gymAddNewItem_pos"
+#define MEMBERBARCODECHECK_URL @"/ipmms_pos.asmx?op=getMemberDataForPOS"
+#define POSDATAADD_URL @"/ipmms_pos.asmx?op=addUpdatePOSBill"
+
+#define POSMASTER_XML @"<MASTER><LOCATIONID>%@</LOCATIONID><TOTQTY>%@</TOTQTY><TOTAMOUNT>%@</TOTAMOUNT><BALANCE>%@</BALANCE><PREVBILLID>%@</PREVBILLID><STATUS>%@</STATUS></MASTER>"
+
+#define POSDETAIL_XML @"<DETAIL><TRANSTYPE>%@</TRANSTYPE><POSITEMID>%@</POSITEMID><DESCRIPTION>%@</DESCRIPTION><PRICE>%@</PRICE><QTY>%@</QTY><AMOUNT>%@</AMOUNT><TRANSSIGN>%@</TRANSSIGN></DETAIL>"
 
 @protocol defaults <NSObject>
 
