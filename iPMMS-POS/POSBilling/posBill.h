@@ -17,6 +17,7 @@
     IBOutlet UIView *entryView;
     IBOutlet UIButton *confirmButton;
     IBOutlet UITextView *posDisplay;
+    IBOutlet UIView *hotKeysView;
     NSMutableArray *dataForDisplay;
     UITableView *posTranView;
     NSString *currMode;
