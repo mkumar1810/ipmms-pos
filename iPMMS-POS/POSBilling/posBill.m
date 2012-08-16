@@ -11,6 +11,7 @@
 @implementation posBill
 
 @synthesize itemNavigatorPop;
+@synthesize hotKeysView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -86,6 +87,7 @@
     [posTranView setDelegate:self];
     [posTranView setDataSource:self];
     [posTranView reloadData];
+
 }
 
 - (void)viewDidUnload

@@ -33,6 +33,7 @@
 }
 
 @property (strong, nonatomic) UIPopoverController *itemNavigatorPop;
+@property (nonatomic, retain) UIView *hotKeysView;
 
 - (UITableViewCell*) getHeaderCellForTxns;
 - (UITableViewCell*) getEmptyCell;
