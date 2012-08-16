@@ -74,7 +74,7 @@
 - (void) generateTableView
 {
     CGRect tvrect;
-    tvrect = CGRectMake(25, 43, 469, 362);
+    tvrect = CGRectMake(0, 52, 507, 360);
     posTranView = [[UITableView alloc] initWithFrame:tvrect style:UITableViewStylePlain];
     [self.view addSubview:posTranView];
     [posTranView setBackgroundView:nil];
