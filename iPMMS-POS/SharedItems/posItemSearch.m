@@ -136,6 +136,9 @@
     viewItemNo = indexPath.row;
     curIndPath = [NSIndexPath indexPathForRow:viewItemNo inSection:0];
     [dispTV selectRowAtIndexPath:curIndPath animated:NO scrollPosition:UITableViewScrollPositionNone];
+    NSMutableDictionary *returnInfo = [[NSMutableDictionary alloc] init];
+    [returnInfo setValue:[dataForDisplay objectAtIndex:indexPath.row] forKey:@"data"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
