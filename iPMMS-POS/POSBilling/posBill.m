@@ -320,6 +320,9 @@
             case 3:
                 [self processVoidTransaction];
                 break;
+            case 99:
+                [self saveDataForMode:@"Cancel"];
+                break;
             default:
                 break;
         }
@@ -881,6 +884,12 @@
         retBtn = [[UIBarButtonItem alloc] initWithTitle:@"Hold" style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
         retBtn.tag = 5;
     }
+    else if ([p_btnTask isEqualToString:@"New"]) 
+    {
+        //retBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(ButtonPressed:)];
+        retBtn = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
+        retBtn.tag = 6;
+    }
     else
     {
         retBtn = [[UIBarButtonItem alloc] initWithTitle:p_btnTask style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
@@ -894,7 +903,12 @@
 {
     if ([currMode isEqualToString:@"L"]) 
     {
-        self.navigationItem.rightBarButtonItem = [self getButtonForNavigation:@"Insert"];
+        UIBarButtonItem *btnInsert = [self getButtonForNavigation:@"New"];
+        self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:btnInsert, nil];
+        actionView.userInteractionEnabled = NO;
+        entryView.userInteractionEnabled = NO;
+        confirmButton.enabled = NO;
+        posDisplay.text = @"";
     }
     
     if ([currMode isEqualToString:@"I"]) 
@@ -903,6 +917,17 @@
         UIBarButtonItem *btnSave = [self getButtonForNavigation:@"Save"];
         //UIBarButtonItem *btnHold = [self getButtonForNavigation:@"Hold"];
         self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:btnSave, btnCancel,  nil];
+        actionView.userInteractionEnabled = YES;
+        entryView.userInteractionEnabled = YES;
+        confirmButton.enabled = YES;
+        txtBillNo.text = @"";
+        txtTotQty.text = @"";
+        txtTotAmount.text = @"";
+        txtBalance.text = @"";
+        [dataForDisplay removeAllObjects];
+        [posTranView reloadData];
+        posDisplay.text = @"Sales*";
+        transModeVal = 1;
     }
 }
 
@@ -1052,8 +1077,14 @@
             notifyInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"Edit",@"data", nil];
             break;
         case 3:
-            currMode = @"L";
-            //[positemSelect cancelItemUpdation];
+            if ([self validateEntriesforMode:@"Cancel"]) 
+            {
+                dAlert = [[UIAlertView alloc] initWithTitle:@" " message:@"Are you sure\nto Cancel?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+                dAlert.cancelButtonIndex = 0;
+                dAlert.delegate = self;
+                dAlert.tag = 99;
+                [dAlert show];
+            }
             break;
         case 4:
             //notifyInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"Save",@"data", nil];
@@ -1062,10 +1093,10 @@
                 [self saveDataForMode:@"Save"];
             break;
         case 5:
-            if ([self validateEntriesforMode:@"Cancel"]) 
-                [self saveDataForMode:@"Cancel"];
-            //notifyInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"Refresh",@"data", nil];
             break;
+        case 6:
+            currMode = @"I";
+            [self setButtonsForDiffMode];
         default:
             break;
     }
@@ -1091,6 +1122,7 @@
         }
     }
     
+    
     return  YES;
 }
 
@@ -1110,11 +1142,11 @@
     else
         billStatus = [NSString stringWithString:@"NIL"];
     
-    l_retXML = [NSString stringWithFormat:POSMASTER_XML,[stdDefaults valueForKey:@"LOGGEDLOCATION"],txtTotQty.text, [frmFloat numberFromString:txtTotAmount.text], [frmFloat numberFromString:txtBalance.text], [NSNumber numberWithInt:_prevBillId], [NSString stringWithString:@"OK"]       ];
+    l_retXML = [NSString stringWithFormat:POSMASTER_XML,[stdDefaults valueForKey:@"LOGGEDLOCATION"],txtTotQty.text, [frmFloat numberFromString:txtTotAmount.text], [frmFloat numberFromString:txtBalance.text], [NSNumber numberWithInt:_prevBillId],billStatus];
     for (NSDictionary *tmpDict in dataForDisplay) 
     {
-        NSLog(@"the tmpdictionary data is %@", tmpDict);
-        l_detailXML = [NSString stringWithFormat:POSDETAIL_XML,[NSNumber numberWithInt:[self getTransModeForTitle:[tmpDict valueForKey:@"OPERATION"]]],[tmpDict valueForKey:@"POSITEMID"],[tmpDict valueForKey:@"DESCRIPTION"], [tmpDict valueForKey:@"PRICE"], [tmpDict valueForKey:@"QTY"], [tmpDict valueForKey:@"AMOUNT"]];  
+        //NSLog(@"the tmpdictionary data is %@", tmpDict);
+        l_detailXML = [NSString stringWithFormat:POSDETAIL_XML,[NSNumber numberWithInt:[self getTransModeForTitle:[tmpDict valueForKey:@"OPERATION"]]],[tmpDict valueForKey:@"POSITEMID"],[tmpDict valueForKey:@"DESCRIPTION"], [tmpDict valueForKey:@"PRICE"], [tmpDict valueForKey:@"QTY"], [tmpDict valueForKey:@"AMOUNT"], [tmpDict valueForKey:@"TRANSSIGN"]];  
         l_retXML = [NSString stringWithFormat:@"%@%@",l_retXML,l_detailXML];
     }
     l_retXML = [NSString stringWithFormat:@"%@%@%@",@"<POSDATA>",l_retXML, @"</POSDATA>"];
@@ -1124,7 +1156,7 @@
     actIndicator.hidden = NO;
     [actIndicator startAnimating];
     NSDictionary *inputDict = [NSDictionary dictionaryWithObjectsAndKeys:l_retXML,@"p_posdata", p_saveMode, @"opmode", nil];
-    posWSCall = [[posWSProxy alloc] initWithReportType:@"ADDPOSDATA" andInputParams:inputDict andNotificatioName:@"memberDataNotify_POS"];
+    posWSCall = [[posWSProxy alloc] initWithReportType:@"ADDPOSDATA" andInputParams:inputDict andNotificatioName:@"posDataUpdateNotify_POS"];
     if ([p_saveMode isEqualToString:@"Save"]) 
     {
         actionView.userInteractionEnabled = NO;
@@ -1135,6 +1167,8 @@
     {
         actIndicator.hidden = YES;
         [actIndicator stopAnimating];
+        currMode = @"I";
+        [self setButtonsForDiffMode];
     }
 }
 
@@ -1147,12 +1181,15 @@
     NSDictionary *recdData = [updatedInfo userInfo];
     NSDictionary *inputParams = [[updatedInfo userInfo] valueForKey:@"inputparams"];
     if ([[inputParams valueForKey:@"opmode"] isEqualToString:@"Cancel"]) 
+    {
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posDataUpdateNotify_POS" object:nil];
         return;
+    }
     NSArray *mdArray = [[NSArray alloc] initWithArray:[recdData valueForKey:@"data"] copyItems:YES];
     if ([mdArray count]>0) 
     {
         NSDictionary *tmpDict = [mdArray objectAtIndex:0];
-        NSLog(@"the tmp dictionary data is %@", tmpDict);
+        //NSLog(@"the tmp dictionary data is %@", tmpDict);
         l_responseCode = [[tmpDict valueForKey:@"RESPONSECODE"] intValue];
         l_respMessage = [[NSString alloc] initWithFormat:@"%@", [tmpDict valueForKey:@"RESPONSEMESSAGE"]];
         if (l_responseCode!=0) 
@@ -1160,7 +1197,9 @@
         else
         {
             currMode = @"L";
+            txtBillNo.text = [[NSString alloc] initWithFormat:@"%@", [tmpDict valueForKey:@"BILLNO"]];
             [self setButtonsForDiffMode];
+            [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posDataUpdateNotify_POS" object:nil];
             return;
         }
     }
