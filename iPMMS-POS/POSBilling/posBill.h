@@ -17,7 +17,6 @@
     IBOutlet UIView *entryView;
     IBOutlet UIButton *confirmButton;
     IBOutlet UITextView *posDisplay;
-    IBOutlet UIView *hotKeysView;
     NSMutableArray *dataForDisplay;
     UITableView *posTranView;
     NSString *currMode;
@@ -30,10 +29,10 @@
     UIActivityIndicatorView *actIndicator;
     posWSProxy *posWSCall;
     int _prevBillId;
+    IBOutlet UIView *hotKeysView;
 }
 
 @property (strong, nonatomic) UIPopoverController *itemNavigatorPop;
-@property (nonatomic, retain) UIView *hotKeysView;
 
 - (UITableViewCell*) getHeaderCellForTxns;
 - (UITableViewCell*) getEmptyCell;
