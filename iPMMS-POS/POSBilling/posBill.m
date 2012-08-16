@@ -11,7 +11,6 @@
 @implementation posBill
 
 @synthesize itemNavigatorPop;
-@synthesize hotKeysView;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
