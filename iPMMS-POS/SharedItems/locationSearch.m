@@ -74,13 +74,15 @@
     [self setForOrientation:intOrientation];
     populationOnProgress = NO;
     [actIndicator stopAnimating];
-    if (!isSplitMode) 
+    NSUserDefaults *stdUserDefaults = [NSUserDefaults standardUserDefaults];
+    [stdUserDefaults setValue:dataForDisplay forKey:@"LOCATIONSLIST"];
+    /*if (!isSplitMode) 
     {
         NSMutableDictionary *returnInfo = [[NSMutableDictionary alloc] init];
         [returnInfo setValue:[NSString stringWithString:@"LocationSelected"] forKey:@"notify"];
         [returnInfo setValue:[dataForDisplay objectAtIndex:0] forKey:@"data"];
         [[NSNotificationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];
-    }
+    }*/
 }
 
 /*

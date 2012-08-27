@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "baseSearchForm.h"
 #import "itemAdd.h"
+#import "posFunctions.h"
 
-@interface posItemSearch : baseSearchForm <UITableViewDataSource, UITableViewDelegate>
+@interface posItemSearch : baseSearchForm <UITableViewDataSource, UITableViewDelegate, posFunctions>
 {
     itemAdd *newItem;
     int refreshTag;
@@ -18,12 +19,10 @@
     NSInteger viewItemNo;
     NSIndexPath *curIndPath;
     NSNumberFormatter *frm;
+    NSString *currMode;
 }
 
 - (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification withNewDataNotification:(NSString*)  p_proxynotificationname;
-- (void) addNewItem;
-- (void) cancelItemUpdation;
-- (void) updateItem;
 - (void) showAlertMessage:(NSString *) dispMessage;
 
 @end

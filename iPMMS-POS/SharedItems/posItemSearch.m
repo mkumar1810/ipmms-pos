@@ -27,6 +27,7 @@
         [frm setMaximumFractionDigits:2];
         [actIndicator startAnimating];
         sBar.text = @"";
+        currMode = [[NSString alloc] initWithFormat:@"%@", @"L"];
         [self generateData];
     }
     return self;
@@ -37,9 +38,10 @@
 {
     if (populationOnProgress==NO)
     {
+        NSUserDefaults *stdUserDefaults = [NSUserDefaults standardUserDefaults];
         populationOnProgress = YES;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(posItemsListDataGenerated:)  name:_proxynotification object:nil];
-        NSMutableDictionary *inputDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:sBar.text, @"p_searchtext" , nil];
+        NSDictionary *inputDict = [[NSDictionary alloc] initWithObjectsAndKeys:sBar.text, @"p_searchtext" , [stdUserDefaults valueForKey:@"LOGGEDLOCATION"], @"p_locationid",   nil];
         posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:inputDict andNotificatioName:_proxynotification];
     }    
 }
@@ -227,13 +229,42 @@
 
 - (void) addNewItem
 {
+    currMode = @"I";
     newItem = [[itemAdd alloc] initWithFrame:self.frame forOrientation:intOrientation andNotification:@""];
+    [self addSubview:newItem];
+}
+
+- (void) addNewCategory
+{
+    currMode = @"CI";
+    [newItem addNewCategory];
+}
+
+- (void) addUpdateCategory
+{
+    [newItem addUpdateCategory];
+}
+
+- (void) cancelCategoryAddUpdation
+{
+    [newItem cancelCategoryAddUpdation];
+}
+
+- (void) editItem:(NSDictionary*) p_itemDict
+{
+    //NSLog(@"the data to be edited for path %@ is %@",  curIndPath, [dataForDisplay objectAtIndex:curIndPath.row]);
+    currMode = @"E";
+    newItem = [[itemAdd alloc] initWithFrame:self.frame forOrientation:intOrientation andNotification:@"" forEditData:[dataForDisplay objectAtIndex:curIndPath.row]];
     [self addSubview:newItem];
 }
 
 - (void) cancelItemUpdation
 {
+    NSDictionary *itemUpdateInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"List",@"data", nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:itemUpdateInfo];
     [newItem removeFromSuperview];
+    newItem = nil;
+    currMode = @"L";
 }
 
 - (void) updateItem
@@ -250,17 +281,29 @@
 - (void) posItemsUpdated:(NSNotification *)updateInfo
 {
     NSDictionary *returnedDict =  [[[updateInfo userInfo] valueForKey:@"data"] objectAtIndex:0];
+    NSLog(@"Tje returned dict is %@", returnedDict);
     NSString *respCode = [returnedDict valueForKey:@"RESPONSECODE"];
     NSString *respMsg = [returnedDict valueForKey:@"RESPONSEMESSAGE"];
     if ([respCode isEqualToString:@"0"]) 
     {
-        [dataForDisplay insertObject:returnedDict atIndex:0];
-        curIndPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        [dispTV reloadData];
-        [dispTV selectRowAtIndexPath:curIndPath animated:NO scrollPosition:UITableViewScrollPositionTop];
+        if ([currMode isEqualToString:@"I"]) 
+        {
+            [dataForDisplay insertObject:returnedDict atIndex:0];
+            curIndPath = [NSIndexPath indexPathForRow:0 inSection:0];
+            [dispTV reloadData];
+        }
+        else
+        {
+            NSArray *updateInfo = [[NSArray alloc] initWithObjects:curIndPath, nil];
+            [dataForDisplay replaceObjectAtIndex:curIndPath.row withObject:returnedDict];
+            [dispTV reloadRowsAtIndexPaths:updateInfo withRowAnimation:UITableViewRowAnimationNone];
+        }
+        [dispTV selectRowAtIndexPath:curIndPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
         NSDictionary *itemUpdateInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"List",@"data", nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:itemUpdateInfo];
         [newItem removeFromSuperview];
+        newItem = nil;
+        currMode = @"L";
     }
     else
         [self showAlertMessage:respMsg];
@@ -272,6 +315,11 @@
 {
     UIAlertView *alert=[[UIAlertView alloc]initWithTitle:@"" message:dispMessage delegate:self cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
     [alert show];
+}
+
+- (void) cancelCategorySelection
+{
+    [newItem cancelCategorySelection];
 }
 
 @end
