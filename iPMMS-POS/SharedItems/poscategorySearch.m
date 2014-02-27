@@ -10,7 +10,7 @@
 
 @implementation poscategorySearch
 
-- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification withNewDataNotification:(NSString*)  p_proxynotificationname
+- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andCatSelectCallback:(METHODCALLBACK) p_catSelectCallBack andControllerCallback:(METHODCALLBACK) p_controllerCallback
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -19,8 +19,10 @@
         [actIndicator setFrame:CGRectMake(141, 321, 37, 37)];
         intOrientation = p_intOrientation;
         _webdataName= [[NSString alloc] initWithFormat:@"%@",@"POSCATEGORIESLIST"];
-        _proxynotification = [[NSString alloc] initWithFormat:@"%@",p_proxynotificationname];
-        _notificationName = [[NSString alloc] initWithFormat:@"%@",p_notification];
+        //_proxynotification = [[NSString alloc] initWithFormat:@"%@",p_proxynotificationname];
+        //_notificationName = [[NSString alloc] initWithFormat:@"%@",p_notification];
+        _controllerCallBack = p_controllerCallback;
+        _catSelectedCallback = p_catSelectCallBack;
         [actIndicator startAnimating];
         sBar.hidden = YES;
         sBar.text = @"";
@@ -37,19 +39,20 @@
     if (populationOnProgress==NO)
     {
         populationOnProgress = YES;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(posItemsListDataGenerated:)  name:_proxynotification object:nil];
-        posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:nil andNotificatioName:_proxynotification];
+        METHODCALLBACK l_catDataCallback = ^ (NSDictionary* p_dictInfo)
+        {
+            [self posItemsListDataGenerated:p_dictInfo];
+        };
+        posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:nil andResponseMethod:l_catDataCallback];
     }    
 }
 
-- (void) posItemsListDataGenerated:(NSNotification *)generatedInfo
+- (void) posItemsListDataGenerated:(NSDictionary *)generatedInfo
 {
-    NSDictionary *recdData = [generatedInfo userInfo];
     if (dataForDisplay) 
         [dataForDisplay removeAllObjects];
-    dataForDisplay = [[NSMutableArray alloc] initWithArray:[recdData valueForKey:@"data"] copyItems:YES];
+    dataForDisplay = [[NSMutableArray alloc] initWithArray:[generatedInfo valueForKey:@"data"] copyItems:YES];
     populationOnProgress = NO;
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:_proxynotification object:nil];
     [self generateTableView];
 }
 
@@ -132,7 +135,7 @@
     NSMutableDictionary *returnInfo = [[NSMutableDictionary alloc] init];
     curIndPath = [NSIndexPath indexPathForRow:indexPath.row inSection:0];
     [returnInfo setValue:[dataForDisplay objectAtIndex:indexPath.row] forKey:@"data"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];
+    _catSelectedCallback(returnInfo);
     [self removeFromSuperview];
 }
 
@@ -205,7 +208,7 @@
         catAddUpdate = [[categoryAddUpdate alloc] initWithFrame:self.frame forOrientation:intOrientation andNotification:@"" forEditData:[dataForDisplay objectAtIndex:selIndex]];
         [self addSubview:catAddUpdate];
         NSDictionary *itemUpdateInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"CatEdit",@"data", nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:itemUpdateInfo];
+        _controllerCallBack(itemUpdateInfo);
     }
 }
 
@@ -244,7 +247,7 @@
 {
     NSMutableDictionary *returnInfo = [[NSMutableDictionary alloc] init];
     [returnInfo setValue:nil forKey:@"data"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:_proxynotification object:self userInfo:returnInfo];
+    _catSelectedCallback(returnInfo);
 }
 
 - (void) addNewCategory;
@@ -273,14 +276,17 @@
     if ([catAddUpdate validateData]) 
     {
         [actIndicator startAnimating];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addUpdateCategoryDone:)  name:@"addUpdateCategoryDone" object:nil];
-        posWSCorecall = [[posWSProxy alloc] initWithReportType:@"ADDUPDATECATEGORY" andInputParams:[catAddUpdate getDictionaryToUpdate] andNotificatioName:@"addUpdateCategoryDone"];
+        METHODCALLBACK l_catUpdateCallback = ^ (NSDictionary* p_dictInfo)
+        {
+            [self posItemsListDataGenerated:p_dictInfo];
+        };        
+        posWSCorecall = [[posWSProxy alloc] initWithReportType:@"ADDUPDATECATEGORY" andInputParams:[catAddUpdate getDictionaryToUpdate] andResponseMethod:l_catUpdateCallback];
     }
 }
 
-- (void) addUpdateCategoryDone:(NSNotification *)updateInfo
+- (void) addUpdateCategoryDone:(NSDictionary *)updateInfo
 {
-    NSDictionary *returnedDict =  [[[updateInfo userInfo] valueForKey:@"data"] objectAtIndex:0];
+    NSDictionary *returnedDict =  [[updateInfo valueForKey:@"data"] objectAtIndex:0];
     NSString *respCode = [returnedDict valueForKey:@"RESPONSECODE"];
     NSString *respMsg = [returnedDict valueForKey:@"RESPONSEMESSAGE"];
     if ([respCode isEqualToString:@"0"]) 
@@ -299,7 +305,7 @@
         }
         [dispTV selectRowAtIndexPath:curIndPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
         NSDictionary *itemUpdateInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"CatList",@"data", nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:itemUpdateInfo];
+        _controllerCallBack(itemUpdateInfo);
         [catAddUpdate removeFromSuperview];
         catAddUpdate = nil;
         currMode = @"L";
@@ -307,7 +313,6 @@
     else
         [self showAlertMessage:respMsg];
     [actIndicator stopAnimating];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"addUpdateCategoryDone" object:nil];
 }
 
 - (void) showAlertMessage:(NSString *) dispMessage

@@ -21,6 +21,7 @@
     IBOutlet UINavigationItem *navTitle;*/
     NSMutableData *webData;
     NSDictionary *inputParms;
+    NSString *MAIN_URL;
 }
 
 - (id) initWithIdValue:(NSString*) p_idvalue andOrientation:(UIInterfaceOrientation) p_intOrientation andFrame:(CGRect) dispFrame andReporttype:(NSString*) p_reporttype andIdFldName:(NSString*) p_idfldname andNotification:(NSString*) p_notificationname;

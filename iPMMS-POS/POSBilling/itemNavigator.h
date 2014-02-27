@@ -16,11 +16,14 @@
     posItemSearch *positemSelect;
     UIInterfaceOrientation currOrientation;
     NSString *currMode;
+    //METHODCALLBACK _controllerCallback;
 }
 
 @property (strong, nonatomic) posBill *posBillTransaction;
 
 - (void) generateItemsList;
+- (void) searchItemNavigationReturn:(NSDictionary *)itemInfo;
+- (void) controllerNotification:(NSDictionary*) notifyInfo;
 
 
 @end

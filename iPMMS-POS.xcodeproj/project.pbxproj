@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		638461AF15E357BB00BA4CEA /* Entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 638461AE15E357BB00BA4CEA /* Entitlements.plist */; };
+		638461B115E358F100BA4CEA /* pos3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 638461B015E358F100BA4CEA /* pos3.jpg */; };
 		6384933915D8DB8300105697 /* locationSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384933815D8DB8300105697 /* locationSearch.m */; };
 		6384933E15D8E12D00105697 /* gymrichlogo.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6384933B15D8E12D00105697 /* gymrichlogo.jpg */; };
 		6384933F15D8E12D00105697 /* newlogin.png in Resources */ = {isa = PBXBuildFile; fileRef = 6384933C15D8E12D00105697 /* newlogin.png */; };
 		6384934015D8E12D00105697 /* pwdbg.png in Resources */ = {isa = PBXBuildFile; fileRef = 6384933D15D8E12D00105697 /* pwdbg.png */; };
 		6384934315D8FF9900105697 /* itemAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384934215D8FF9900105697 /* itemAdd.m */; };
+		6384B9E915E642E6008AF564 /* categoryAddUpdate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384B9E815E642E6008AF564 /* categoryAddUpdate.m */; };
+		6384B9EC15E6544B008AF564 /* editicon.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6384B9EB15E6544B008AF564 /* editicon.jpg */; };
 		6384F3CA15D7D19F00B1054B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3C915D7D19F00B1054B /* UIKit.framework */; };
 		6384F3CC15D7D19F00B1054B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3CB15D7D19F00B1054B /* Foundation.framework */; };
 		6384F3CE15D7D19F00B1054B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6384F3CD15D7D19F00B1054B /* CoreGraphics.framework */; };
@@ -20,6 +24,10 @@
 		6384F3DA15D7D19F00B1054B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F3D915D7D19F00B1054B /* AppDelegate.m */; };
 		6384F40215D7E15A00B1054B /* itemNavigator.m in Sources */ = {isa = PBXBuildFile; fileRef = 6384F40015D7E15A00B1054B /* itemNavigator.m */; };
 		6384F40315D7E15A00B1054B /* itemNavigator.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6384F40115D7E15A00B1054B /* itemNavigator.xib */; };
+		638545CC15EA28A60064D5AD /* holdBillsSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 638545CB15EA28A60064D5AD /* holdBillsSearch.m */; };
+		638545DB15EA527D0064D5AD /* genPrintRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 638545D715EA527C0064D5AD /* genPrintRenderer.m */; };
+		638545DC15EA527D0064D5AD /* genPrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = 638545D915EA527C0064D5AD /* genPrintView.m */; };
+		638545DD15EA527D0064D5AD /* genPrintView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 638545DA15EA527C0064D5AD /* genPrintView.xib */; };
 		6386100E15D8C3890057297B /* posItemSearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386100D15D8C3890057297B /* posItemSearch.m */; };
 		6386101515D8C3D90057297B /* baseSearchForm.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386101215D8C3D90057297B /* baseSearchForm.m */; };
 		6386101615D8C3D90057297B /* getSearch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6386101415D8C3D90057297B /* getSearch.xib */; };
@@ -32,9 +40,12 @@
 		6386102C15D8C8000057297B /* signIn.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6386102515D8C8000057297B /* signIn.xib */; };
 		6386102D15D8C8000057297B /* signOut.m in Sources */ = {isa = PBXBuildFile; fileRef = 6386102715D8C8000057297B /* signOut.m */; };
 		6386102E15D8C8000057297B /* signOut.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6386102815D8C8000057297B /* signOut.xib */; };
+		63868C2B15E4DC5B00BB094F /* poscategorySearch.m in Sources */ = {isa = PBXBuildFile; fileRef = 63868C2A15E4DC5B00BB094F /* poscategorySearch.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		638461AE15E357BB00BA4CEA /* Entitlements.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Entitlements.plist; path = "../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/Entitlements.plist"; sourceTree = "<group>"; };
+		638461B015E358F100BA4CEA /* pos3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = pos3.jpg; sourceTree = "<group>"; };
 		6384933215D8CCB700105697 /* posFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = posFunctions.h; path = "../../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/POSBilling/posFunctions.h"; sourceTree = "<group>"; };
 		6384933715D8DB8300105697 /* locationSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = locationSearch.h; sourceTree = "<group>"; };
 		6384933815D8DB8300105697 /* locationSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = locationSearch.m; sourceTree = "<group>"; };
@@ -43,6 +54,9 @@
 		6384933D15D8E12D00105697 /* pwdbg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pwdbg.png; sourceTree = "<group>"; };
 		6384934115D8FF9900105697 /* itemAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itemAdd.h; sourceTree = "<group>"; };
 		6384934215D8FF9900105697 /* itemAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = itemAdd.m; sourceTree = "<group>"; };
+		6384B9E715E642E6008AF564 /* categoryAddUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = categoryAddUpdate.h; sourceTree = "<group>"; };
+		6384B9E815E642E6008AF564 /* categoryAddUpdate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = categoryAddUpdate.m; sourceTree = "<group>"; };
+		6384B9EB15E6544B008AF564 /* editicon.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = editicon.jpg; sourceTree = "<group>"; };
 		6384F3C515D7D19F00B1054B /* iPMMS-POS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iPMMS-POS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6384F3C915D7D19F00B1054B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		6384F3CB15D7D19F00B1054B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -56,6 +70,13 @@
 		6384F3FF15D7E15A00B1054B /* itemNavigator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = itemNavigator.h; sourceTree = "<group>"; };
 		6384F40015D7E15A00B1054B /* itemNavigator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = itemNavigator.m; sourceTree = "<group>"; };
 		6384F40115D7E15A00B1054B /* itemNavigator.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = itemNavigator.xib; sourceTree = "<group>"; };
+		638545CA15EA28A50064D5AD /* holdBillsSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = holdBillsSearch.h; sourceTree = "<group>"; };
+		638545CB15EA28A60064D5AD /* holdBillsSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = holdBillsSearch.m; sourceTree = "<group>"; };
+		638545D615EA527C0064D5AD /* genPrintRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = genPrintRenderer.h; sourceTree = "<group>"; };
+		638545D715EA527C0064D5AD /* genPrintRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = genPrintRenderer.m; sourceTree = "<group>"; };
+		638545D815EA527C0064D5AD /* genPrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = genPrintView.h; sourceTree = "<group>"; };
+		638545D915EA527C0064D5AD /* genPrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = genPrintView.m; sourceTree = "<group>"; };
+		638545DA15EA527C0064D5AD /* genPrintView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = genPrintView.xib; sourceTree = "<group>"; };
 		6386100C15D8C3890057297B /* posItemSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = posItemSearch.h; sourceTree = "<group>"; };
 		6386100D15D8C3890057297B /* posItemSearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = posItemSearch.m; sourceTree = "<group>"; };
 		6386101015D8C3D90057297B /* baseProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = baseProtocol.h; sourceTree = "<group>"; };
@@ -67,7 +88,7 @@
 		6386101815D8C4020057297B /* posWSProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = posWSProxy.m; sourceTree = "<group>"; };
 		6386101A15D8C6190057297B /* posBill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = posBill.h; path = "../../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/POSBilling/posBill.h"; sourceTree = "<group>"; };
 		6386101B15D8C6190057297B /* posBill.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = posBill.m; path = "../../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/POSBilling/posBill.m"; sourceTree = "<group>"; };
-		6386101C15D8C6190057297B /* posBill.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = posBill.xib; path = "../../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/POSBilling/posBill.xib"; sourceTree = "<group>"; };
+		6386101C15D8C6190057297B /* posBill.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = posBill.xib; sourceTree = "<group>"; };
 		6386102015D8C8000057297B /* login.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = login.h; sourceTree = "<group>"; };
 		6386102115D8C8000057297B /* login.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = login.m; sourceTree = "<group>"; };
 		6386102215D8C8000057297B /* login.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = login.xib; sourceTree = "<group>"; };
@@ -77,6 +98,8 @@
 		6386102615D8C8000057297B /* signOut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = signOut.h; sourceTree = "<group>"; };
 		6386102715D8C8000057297B /* signOut.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = signOut.m; sourceTree = "<group>"; };
 		6386102815D8C8000057297B /* signOut.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = signOut.xib; sourceTree = "<group>"; };
+		63868C2915E4DC5B00BB094F /* poscategorySearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = poscategorySearch.h; sourceTree = "<group>"; };
+		63868C2A15E4DC5B00BB094F /* poscategorySearch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = poscategorySearch.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +119,8 @@
 		6384933A15D8E12D00105697 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				6384B9EB15E6544B008AF564 /* editicon.jpg */,
+				638461B015E358F100BA4CEA /* pos3.jpg */,
 				6384933B15D8E12D00105697 /* gymrichlogo.jpg */,
 				6384933C15D8E12D00105697 /* newlogin.png */,
 				6384933D15D8E12D00105697 /* pwdbg.png */,
@@ -107,6 +132,7 @@
 		6384F3BA15D7D19E00B1054B = {
 			isa = PBXGroup;
 			children = (
+				638461AE15E357BB00BA4CEA /* Entitlements.plist */,
 				6384F3CF15D7D19F00B1054B /* iPMMS-POS */,
 				6384F3C815D7D19F00B1054B /* Frameworks */,
 				6384F3C615D7D19F00B1054B /* Products */,
@@ -180,6 +206,12 @@
 				6386100D15D8C3890057297B /* posItemSearch.m */,
 				6384934115D8FF9900105697 /* itemAdd.h */,
 				6384934215D8FF9900105697 /* itemAdd.m */,
+				63868C2915E4DC5B00BB094F /* poscategorySearch.h */,
+				63868C2A15E4DC5B00BB094F /* poscategorySearch.m */,
+				6384B9E715E642E6008AF564 /* categoryAddUpdate.h */,
+				6384B9E815E642E6008AF564 /* categoryAddUpdate.m */,
+				638545CA15EA28A50064D5AD /* holdBillsSearch.h */,
+				638545CB15EA28A60064D5AD /* holdBillsSearch.m */,
 			);
 			name = SharedItems;
 			path = "../../../../../../Users/macuser/Desktop/GYM/iPMMS-POS/iPMMS-POS/SharedItems";
@@ -188,6 +220,11 @@
 		6386100F15D8C3D90057297B /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				638545D615EA527C0064D5AD /* genPrintRenderer.h */,
+				638545D715EA527C0064D5AD /* genPrintRenderer.m */,
+				638545D815EA527C0064D5AD /* genPrintView.h */,
+				638545D915EA527C0064D5AD /* genPrintView.m */,
+				638545DA15EA527C0064D5AD /* genPrintView.xib */,
 				6386101015D8C3D90057297B /* baseProtocol.h */,
 				6386101115D8C3D90057297B /* baseSearchForm.h */,
 				6386101215D8C3D90057297B /* baseSearchForm.m */,
@@ -277,6 +314,10 @@
 				6384933E15D8E12D00105697 /* gymrichlogo.jpg in Resources */,
 				6384933F15D8E12D00105697 /* newlogin.png in Resources */,
 				6384934015D8E12D00105697 /* pwdbg.png in Resources */,
+				638461AF15E357BB00BA4CEA /* Entitlements.plist in Resources */,
+				638461B115E358F100BA4CEA /* pos3.jpg in Resources */,
+				6384B9EC15E6544B008AF564 /* editicon.jpg in Resources */,
+				638545DD15EA527D0064D5AD /* genPrintView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,6 +340,11 @@
 				6386102D15D8C8000057297B /* signOut.m in Sources */,
 				6384933915D8DB8300105697 /* locationSearch.m in Sources */,
 				6384934315D8FF9900105697 /* itemAdd.m in Sources */,
+				63868C2B15E4DC5B00BB094F /* poscategorySearch.m in Sources */,
+				6384B9E915E642E6008AF564 /* categoryAddUpdate.m in Sources */,
+				638545CC15EA28A60064D5AD /* holdBillsSearch.m in Sources */,
+				638545DB15EA527D0064D5AD /* genPrintRenderer.m in Sources */,
+				638545DC15EA527D0064D5AD /* genPrintView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,6 +362,42 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		638461AB15E3573A00BA4CEA /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Distribution;
+		};
+		638461AC15E3573A00BA4CEA /* Distribution */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Al Ahli Holding Group";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Al Ahli Holding Group";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "iPMMS-POS/iPMMS-POS-Prefix.pch";
+				INFOPLIST_FILE = "iPMMS-POS/iPMMS-POS-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "1ABA0860-9B6A-444C-AF7B-BBD34DC8CD7A";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "1ABA0860-9B6A-444C-AF7B-BBD34DC8CD7A";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Distribution;
+		};
 		6384F3E715D7D19F00B1054B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -393,6 +475,7 @@
 			buildConfigurations = (
 				6384F3E715D7D19F00B1054B /* Debug */,
 				6384F3E815D7D19F00B1054B /* Release */,
+				638461AB15E3573A00BA4CEA /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -402,6 +485,7 @@
 			buildConfigurations = (
 				6384F3EA15D7D19F00B1054B /* Debug */,
 				6384F3EB15D7D19F00B1054B /* Release */,
+				638461AC15E3573A00BA4CEA /* Distribution */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

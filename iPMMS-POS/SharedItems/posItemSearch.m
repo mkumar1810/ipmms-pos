@@ -10,7 +10,7 @@
 
 @implementation posItemSearch
 
-- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification withNewDataNotification:(NSString*)  p_proxynotificationname
+- (id) initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotifyMethod:(METHODCALLBACK) p_callbackMethod andControllerCallBack:(METHODCALLBACK) p_controllerCallBack
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -19,8 +19,8 @@
         [actIndicator setFrame:CGRectMake(141, 321, 37, 37)];
         intOrientation = p_intOrientation;
         _webdataName= [[NSString alloc] initWithFormat:@"%@",@"POSITEMSLIST"];
-        _proxynotification = [[NSString alloc] initWithFormat:@"%@",p_proxynotificationname];
-        _notificationName = [[NSString alloc] initWithFormat:@"%@",p_notification];
+        _itemSearchCallBack = p_callbackMethod;
+        _controllerCallBack = p_controllerCallBack;
         frm = [[NSNumberFormatter alloc] init];
         [frm setNumberStyle:NSNumberFormatterCurrencyStyle];
         [frm setCurrencySymbol:@""];
@@ -40,22 +40,24 @@
     {
         NSUserDefaults *stdUserDefaults = [NSUserDefaults standardUserDefaults];
         populationOnProgress = YES;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(posItemsListDataGenerated:)  name:_proxynotification object:nil];
+        METHODCALLBACK l_itemSearchReturn = ^ (NSDictionary* p_dictInfo)
+        {
+            [self posItemsListDataGenerated:p_dictInfo];
+        };
         NSDictionary *inputDict = [[NSDictionary alloc] initWithObjectsAndKeys:sBar.text, @"p_searchtext" , [stdUserDefaults valueForKey:@"LOGGEDLOCATION"], @"p_locationid",   nil];
-        posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:inputDict andNotificatioName:_proxynotification];
+        //posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:inputDict andNotificatioName:_proxynotification];
+        posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:inputDict andResponseMethod:l_itemSearchReturn];
     }    
 }
 
-- (void) posItemsListDataGenerated:(NSNotification *)generatedInfo
+- (void) posItemsListDataGenerated:(NSDictionary *)generatedInfo
 {
-    NSDictionary *recdData = [generatedInfo userInfo];
     if (dataForDisplay) 
         [dataForDisplay removeAllObjects];
-    dataForDisplay = [[NSMutableArray alloc] initWithArray:[recdData valueForKey:@"data"] copyItems:YES];
+    dataForDisplay = [[NSMutableArray alloc] initWithArray:[generatedInfo valueForKey:@"data"] copyItems:YES];
     viewItemNo = 0;
     curIndPath = [NSIndexPath indexPathForRow:0 inSection:0];
     populationOnProgress = NO;
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:_proxynotification object:nil];
     [self generateTableView];
 }
 
@@ -140,7 +142,7 @@
     [dispTV selectRowAtIndexPath:curIndPath animated:NO scrollPosition:UITableViewScrollPositionNone];
     NSMutableDictionary *returnInfo = [[NSMutableDictionary alloc] init];
     [returnInfo setValue:[dataForDisplay objectAtIndex:indexPath.row] forKey:@"data"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];
+    _itemSearchCallBack(returnInfo);
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -224,13 +226,13 @@
 {
     NSMutableDictionary *returnInfo = [[NSMutableDictionary alloc] init];
     [returnInfo setValue:nil forKey:@"data"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:_proxynotification object:self userInfo:returnInfo];
+    _itemSearchCallBack(returnInfo);
 }
 
 - (void) addNewItem
 {
     currMode = @"I";
-    newItem = [[itemAdd alloc] initWithFrame:self.frame forOrientation:intOrientation andNotification:@""];
+    newItem = [[itemAdd alloc] initWithFrame:self.frame forOrientation:intOrientation withControllerCallback:_controllerCallBack];
     [self addSubview:newItem];
 }
 
@@ -254,14 +256,14 @@
 {
     //NSLog(@"the data to be edited for path %@ is %@",  curIndPath, [dataForDisplay objectAtIndex:curIndPath.row]);
     currMode = @"E";
-    newItem = [[itemAdd alloc] initWithFrame:self.frame forOrientation:intOrientation andNotification:@"" forEditData:[dataForDisplay objectAtIndex:curIndPath.row]];
+    newItem = [[itemAdd alloc] initWithFrame:self.frame forOrientation:intOrientation forEditData:[dataForDisplay objectAtIndex:curIndPath.row] withControllerCallback:_controllerCallBack];
     [self addSubview:newItem];
 }
 
 - (void) cancelItemUpdation
 {
     NSDictionary *itemUpdateInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"List",@"data", nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:itemUpdateInfo];
+    _controllerCallBack(itemUpdateInfo);
     [newItem removeFromSuperview];
     newItem = nil;
     currMode = @"L";
@@ -273,15 +275,17 @@
     {
         [actIndicator startAnimating];
         //ADDUPDATEPOSITEM
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(posItemsUpdated:)  name:@"posItemsUpdated" object:nil];
-        posWSCorecall = [[posWSProxy alloc] initWithReportType:@"ADDUPDATEPOSITEM" andInputParams:[newItem getDictionaryToUpdate] andNotificatioName:@"posItemsUpdated"];
+        METHODCALLBACK l_itemUpdateReturn = ^ (NSDictionary* p_dictInfo)
+        {
+            [self posItemsUpdated:p_dictInfo];
+        };
+        posWSCorecall = [[posWSProxy alloc] initWithReportType:@"ADDUPDATEPOSITEM" andInputParams:[newItem getDictionaryToUpdate] andResponseMethod:l_itemUpdateReturn];
     }
 }
 
-- (void) posItemsUpdated:(NSNotification *)updateInfo
+- (void) posItemsUpdated:(NSDictionary *)updateInfo
 {
-    NSDictionary *returnedDict =  [[[updateInfo userInfo] valueForKey:@"data"] objectAtIndex:0];
-    NSLog(@"Tje returned dict is %@", returnedDict);
+    NSDictionary *returnedDict =  [[updateInfo valueForKey:@"data"] objectAtIndex:0];
     NSString *respCode = [returnedDict valueForKey:@"RESPONSECODE"];
     NSString *respMsg = [returnedDict valueForKey:@"RESPONSEMESSAGE"];
     if ([respCode isEqualToString:@"0"]) 
@@ -300,7 +304,7 @@
         }
         [dispTV selectRowAtIndexPath:curIndPath animated:NO scrollPosition:UITableViewScrollPositionMiddle];
         NSDictionary *itemUpdateInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"List",@"data", nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:itemUpdateInfo];
+        _controllerCallBack(itemUpdateInfo);
         [newItem removeFromSuperview];
         newItem = nil;
         currMode = @"L";
@@ -308,7 +312,6 @@
     else
         [self showAlertMessage:respMsg];
     [actIndicator stopAnimating];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posItemsUpdated" object:nil];
 }
 
 - (void) showAlertMessage:(NSString *) dispMessage

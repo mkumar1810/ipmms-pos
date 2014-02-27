@@ -10,7 +10,7 @@
 
 @implementation holdBillsSearch
 
-- (id)initWithDataNotification:(NSString*) p_datanotification
+- (id)init     //WithDataNotification:(NSString*) p_datanotification
 {
     self = [super initWithFrame:CGRectMake(15, 35, 220, 180)];
     if (self) {
@@ -18,7 +18,7 @@
         [super setViewBackGroundColor:[UIColor colorWithRed:0.0f green:0.0f blue:89.0/255.0 alpha:1.0]];
         [actIndicator setFrame:CGRectMake(115, 70, 37, 37)];
         _webdataName= [[NSString alloc] initWithFormat:@"%@",@"HOLDBILLSLIST"];
-        _proxynotification = [[NSString alloc] initWithFormat:@"%@",p_datanotification];
+        //_proxynotification = [[NSString alloc] initWithFormat:@"%@",p_datanotification];
         [actIndicator startAnimating];
         sBar.text = @"";
         sBar.hidden = YES;
@@ -37,22 +37,26 @@
         [actIndicator startAnimating];
         NSUserDefaults *stdUserDefaults = [NSUserDefaults standardUserDefaults];
         populationOnProgress = YES;
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(holdBillsListDataGenerated:)  name:_proxynotification object:nil];
+        METHODCALLBACK _wsReturnMethod = ^ (NSDictionary* p_dictInfo)
+        {
+            [self holdBillsListDataGenerated:p_dictInfo];
+        };  
+        //[[NSNotificaxxtionCenter defaultCenter] addObserver:self selector:@selector(holdBillsListDataGenerated:)  name:_proxynotification object:nil];
         NSDictionary *inputDict = [[NSDictionary alloc] initWithObjectsAndKeys:[stdUserDefaults valueForKey:@"LOGGEDLOCATION"], @"p_locationid",   nil];
-        posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:inputDict andNotificatioName:_proxynotification];
+        //posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:inputDict andNotificatioName:_proxynotification];
+        posWSCorecall = [[posWSProxy alloc] initWithReportType:_webdataName andInputParams:inputDict andResponseMethod:_wsReturnMethod];
     }    
 }
 
-- (void) holdBillsListDataGenerated:(NSNotification *)generatedInfo
+- (void) holdBillsListDataGenerated:(NSDictionary *)generatedInfo
 {
-    NSDictionary *recdData = [generatedInfo userInfo];
     if (dataForDisplay) 
         [dataForDisplay removeAllObjects];
-    dataForDisplay = [[NSMutableArray alloc] initWithArray:[recdData valueForKey:@"data"] copyItems:YES];
+    dataForDisplay = [[NSMutableArray alloc] initWithArray:[generatedInfo valueForKey:@"data"] copyItems:YES];
     [self generateTableView];
     populationOnProgress = NO;
     [actIndicator stopAnimating];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:_proxynotification object:nil];
+    //[[NSNotificxxationCenter defaultCenter] removeObserver:self name:_proxynotification object:nil];
 }
 
 /*

@@ -10,16 +10,18 @@
 
 @implementation itemAdd
 
-- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification forEditData:(NSDictionary*) p_initData
+static bool shouldScroll = true;
+
+- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation  forEditData:(NSDictionary*) p_initData withControllerCallback:(METHODCALLBACK) p_controllerCallBack
 {
-    self = [self initWithFrame:frame forOrientation:p_intOrientation andNotification:p_notification];
+    self = [self initWithFrame:frame forOrientation:p_intOrientation withControllerCallback:p_controllerCallBack];
     _initDict = [NSDictionary dictionaryWithDictionary:p_initData];
     currMode = @"Edit";
     [self generateData];
     return self;
 }
 
-- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification 
+- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation withControllerCallback:(METHODCALLBACK) p_controllerCallBack
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -28,7 +30,7 @@
         bgcolor = [UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:89.0f/255.0f alpha:1.0];
         [super setViewBackGroundColor:bgcolor];
         intOrientation = p_intOrientation;
-        _notificationName = [[NSString alloc] initWithFormat:@"%@",p_notification];
+        _controllerCallBack = p_controllerCallBack;
         [actIndicator startAnimating];
         sBar.text = @"";
         sBar.hidden = YES;
@@ -47,16 +49,17 @@
 {
     //POSITEMDATA
     //NSLog(@"the received information %@", _initDict);
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(posItemDataGenerated:)  name:@"posItemDataGenerated" object:nil];
-    posCoreCall = [[posWSProxy alloc] initWithReportType:@"POSITEMDATA" andInputParams:_initDict andNotificatioName:@"posItemDataGenerated"];
+    METHODCALLBACK l_itemDataCallBack = ^ (NSDictionary* p_dictInfo)
+    {
+        [self posItemDataGenerated:p_dictInfo];
+    };
+    posCoreCall = [[posWSProxy alloc] initWithReportType:@"POSITEMDATA" andInputParams:_initDict andResponseMethod:l_itemDataCallBack];
 }
 
-- (void) posItemDataGenerated : (NSNotification*) p_posItemInfo
+- (void) posItemDataGenerated : (NSDictionary*) p_posItemInfo
 {
-    //NSLog(@"the received data is %@", p_posItemInfo);
-    NSDictionary *recdData = [p_posItemInfo userInfo];
-    recdItemArray =[[NSMutableArray alloc] initWithArray:[recdData valueForKey:@"data"] copyItems:YES];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posItemDataGenerated" object:nil];
+
+    recdItemArray =[[NSMutableArray alloc] initWithArray:[p_posItemInfo valueForKey:@"data"] copyItems:YES];
     [self displayDataForList];
 }
 
@@ -79,7 +82,7 @@
     {
         NSDictionary *tmpDict = [locPriceDetail objectAtIndex:l_loopcounter];
         UITableViewCell *reqCell = [dispTV cellForRowAtIndexPath:[NSIndexPath indexPathForRow:l_loopcounter inSection:1]];
-        UITextField *priceField = (UITextField*)  [reqCell.contentView viewWithTag:2];
+        UITextField *priceField = (UITextField*)  [reqCell.contentView viewWithTag:reqCell.tag];
         priceField.text = @"0.00";
         for (NSDictionary *locPriceDict in recdItemArray) 
         {
@@ -104,7 +107,7 @@
     CGRect tvrect;
     ystartPoint = 45;
     sBarwidth = 320;
-    tvrect = CGRectMake(0, ystartPoint, 320, 720);
+    tvrect = CGRectMake(0, ystartPoint, 320, 700);
     [actIndicator setFrame:CGRectMake(140, 300, 37, 37)];
     //[sBar setFrame:CGRectMake(0, 0, sBarwidth, sBar.bounds.size.height)];
     dispTV = [[UITableView alloc] initWithFrame:tvrect style:UITableViewStyleGrouped];
@@ -153,36 +156,38 @@
     /*NSMutableDictionary *returnInfo = [[NSMutableDictionary alloc] init];
      [returnInfo setValue:[NSString stringWithString:@"BillCycleSelected"] forKey:@"notify"];
      [returnInfo setValue:[dataForDisplay objectAtIndex:indexPath.row] forKey:@"data"];
-     [[NSNotificationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];*/
+     [[NSNotixxficationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];*/
     if (indexPath.section==0 & indexPath.row==3) 
     {
         NSDictionary *catSelInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"CatList",@"data", nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:catSelInfo];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(posCategorySelected:)  name:@"posCategorySelectForItem" object:nil];
-        posCatSelect = [[poscategorySearch alloc] initWithFrame:self.frame forOrientation:intOrientation andNotification:@"posCategorySelectForItem" withNewDataNotification:@"posCategorySelection"];
+        _controllerCallBack(catSelInfo);
+        METHODCALLBACK l_catSelectCallback = ^ (NSDictionary* p_dictInfo)
+        {
+            [self posCategorySelected:p_dictInfo];
+        };        
+        posCatSelect = [[poscategorySearch alloc] initWithFrame:self.frame forOrientation:intOrientation andCatSelectCallback:l_catSelectCallback andControllerCallback:_controllerCallBack];
         [self addSubview:posCatSelect];
     }
 }
 
-- (void) posCategorySelected : (NSNotification*) catSelectInfo
+- (void) posCategorySelected : (NSDictionary*) catSelectInfo
 {
 
-    NSDictionary *recdData = [[catSelectInfo userInfo] valueForKey:@"data"];
+    NSDictionary *recdData = [catSelectInfo valueForKey:@"data"];
     if (recdData) {
         txtCategoryName.text = [[NSString alloc] initWithFormat:@"%@ - %@", [recdData valueForKey:@"CATEGORYCODE"], [recdData valueForKey:@"CATEGORYNAME"]];
         _categoryId = [[recdData valueForKey:@"CATEGORYID"] intValue];
+        [self setTextFieldFocus:0];
     }
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posCategorySelectForItem" object:nil];
     NSDictionary *itemUpdateInfo = [[NSDictionary alloc] initWithObjectsAndKeys:currMode ,@"data", nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:itemUpdateInfo];
+    _controllerCallBack(itemUpdateInfo);
 }
 
 - (void) cancelCategorySelection
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posCategorySelectForItem" object:nil];
     [posCatSelect removeFromSuperview];
     NSDictionary *itemUpdateInfo = [[NSDictionary alloc] initWithObjectsAndKeys:currMode ,@"data", nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"controllerNotify" object:self userInfo:itemUpdateInfo];
+    _controllerCallBack(itemUpdateInfo);
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -224,7 +229,6 @@
         txt1 = [[UITextField alloc] initWithFrame:CGRectMake(cell.frame.size.width-100, 0, 75, 35)];
         txt1.borderStyle = UITextBorderStyleNone;
         txt1.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-        txt1.tag = 2;
         txt1.textAlignment = UITextAlignmentRight;
         txt1.font = cell.textLabel.font;
         txt1.delegate = self;
@@ -236,8 +240,27 @@
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
         cell.textLabel.numberOfLines = 2;
     }
+    else
+        txt1 = (UITextField*) [cell.contentView viewWithTag:cell.tag];
     cell.textLabel.text = [[NSString alloc] initWithFormat:@"%@\n%@",[tmpDict valueForKey:@"GYMNAME"],[tmpDict valueForKey:@"GYMADDRESS"]];
-    
+    if (recdItemArray) 
+    {
+        for (NSDictionary *locPriceDict in recdItemArray) 
+        {
+            if ([[locPriceDict valueForKey:@"DATATYPE"] isEqualToString:@"2"]) 
+            {
+                NSString *gymLocId = [NSString stringWithString:[tmpDict valueForKey:@"GYMLOCATIONID"]];
+                NSString *priceLocId = [NSString stringWithString:[locPriceDict valueForKey:@"LOCATIONID"]];
+                if ([gymLocId isEqualToString:priceLocId]) 
+                {
+                    txt1.text = [locPriceDict valueForKey:@"LOCATIONPRICE"];
+                    break;
+                }
+            }
+        }
+    }
+    cell.tag = 200+p_rowno;
+    txt1.tag = 200+p_rowno;
     return cell;
 }
 
@@ -399,7 +422,7 @@
         {
             UITableViewCell *reqCell = [dispTV cellForRowAtIndexPath:[NSIndexPath indexPathForRow:l_loopcounter inSection:1]];
             NSString *locMessage = [[NSString alloc] initWithFormat:@"%@ \nPrice is not valid", reqCell.textLabel.text];
-            UITextField *priceField = (UITextField*)  [reqCell.contentView viewWithTag:2];
+            UITextField *priceField = (UITextField*)  [reqCell.contentView viewWithTag:reqCell.tag];
             l_resultVal = [self emptyCheckResult:priceField andMessage:locMessage];
             if (l_resultVal==NO) return l_resultVal;
             if ([priceField.text doubleValue]==0) 
@@ -441,16 +464,57 @@
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+    shouldScroll = YES;
     if ([textField isEqual:txtItemCode])
         [txtItemName becomeFirstResponder];
     else if([textField isEqual:txtItemName])
         [txtItemPrice becomeFirstResponder];
     else if ([textField isEqual:txtItemPrice])
         [txtItemPrice resignFirstResponder];
+        //[self setTextFieldFocus:0];
     else
-        [textField resignFirstResponder];
-    
+    {
+        int txtFieldTag = textField.tag-200;
+        if (txtFieldTag >= [locPriceDetail count]-1) 
+        {
+            [textField resignFirstResponder];
+            [dispTV setContentOffset:CGPointMake(0, 0) animated:YES];  
+        }
+        [self setTextFieldFocus:txtFieldTag+1];
+    }
     return NO;
+}
+
+- (void) setTextFieldFocus:(int) p_focusTag
+{
+    if ((p_focusTag < 0) | (p_focusTag > [locPriceDetail count]-1)) return;
+    UITableViewCell *reqCell = [dispTV cellForRowAtIndexPath:[NSIndexPath indexPathForRow:p_focusTag inSection:1]];
+    UITextField *priceField = (UITextField*)  [reqCell.contentView viewWithTag:200+p_focusTag];
+    [priceField becomeFirstResponder];
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField 
+{
+    if (shouldScroll) 
+    {
+        scrollOffset = dispTV.contentOffset;
+        CGPoint scrollPoint;
+        CGRect inputFieldBounds = [textField bounds];
+        inputFieldBounds = [textField convertRect:inputFieldBounds toView:dispTV];
+        scrollPoint = inputFieldBounds.origin;
+        scrollPoint.x = 0;
+        int txtFieldTag = textField.tag-200;
+        scrollPoint.y = 0;
+        if (txtFieldTag>2)
+            scrollPoint.y = 35 * (txtFieldTag-2);
+        [dispTV setContentOffset:scrollPoint animated:YES];  
+        shouldScroll = false;
+    }
+}
+
+- (void) textFieldDidEndEditing:(UITextField *) textField 
+{
+    
 }
 
 - (NSDictionary*) getDictionaryToUpdate

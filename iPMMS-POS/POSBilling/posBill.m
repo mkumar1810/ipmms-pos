@@ -12,6 +12,16 @@
 
 @synthesize itemNavigatorPop;
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil andReLoginCallback:(METHODCALLBACK) p_reloginCallBack
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) 
+    {
+        _reloginCallBack = p_reloginCallBack;
+    }
+    return self;
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -52,11 +62,23 @@
     btnRefresh.tag = 0;
     self.navigationItem.leftBarButtonItem = btnRefresh;*/
     
+    UIBarButtonItem *btnLogout = [self getButtonForNavigation:@"Exit"];
+    self.navigationItem.leftBarButtonItem = btnLogout;
+    
     [self.navigationController.navigationBar setTintColor:[UIColor colorWithRed:0.4 green:0.4 blue:0.4 alpha:0.4]];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(controllerNotification:)  name:@"controllerNotify" object:nil];
     actIndicator.transform = CGAffineTransformMakeScale(5.00, 5.00);        
-    self.navigationItem.leftBarButtonItem = nil;
-    posDisplay.text = @"Sales*";
+    //self.navigationItem.leftBarButtonItem = nil;
+    [posDisplay setFrame:CGRectMake(posDisplay.frame.origin.x, posDisplay.frame.origin.y, posDisplay.frame.size.width, 82)];
+    //posDisplay.text = @"Sales*";
+    [self setOperationMode:@"Sales"];
+    salesColor = [UIColor colorWithRed:205.0f/255.0f green:133.0f/255.0f blue:63.0f/255.0f alpha:1.0];
+    voidColor = [UIColor colorWithRed:155.0f/255.0f green:173.0f/255.0f blue:123.0f/255.0f alpha:1.0];
+    discpercColor = [UIColor colorWithRed:255.0/255.0f green:135.0f/255.0f blue:0.0f/255.0f alpha:1.0];
+    discamtColor = [UIColor colorWithRed:0.0f/255.0f green:255.0f/255.0f blue:0.0f/255.0f alpha:1.0];
+    cashColor = [UIColor colorWithRed:133.0f/255.0f green:73.0f/255.0f blue:0.0f/255.0f alpha:1.0];
+    returnColor = [UIColor colorWithRed:65.0f/255.0f green:173.0f/255.0f blue:233.0f/255.0f alpha:1.0];
+    repeatColor = [UIColor colorWithRed:255.0f/255.0f green:9.0f/255.0f blue:13.0f/255.0f alpha:1.0];
+    cardColor = [UIColor colorWithRed:0.0f/255.0f green:126.0f/255.0f blue:255.0f/255.0f alpha:1.0];
     _prevBillId = 0;
     frmFloat = [[NSNumberFormatter alloc] init];
     [frmFloat setNumberStyle:NSNumberFormatterCurrencyStyle];
@@ -74,7 +96,7 @@
 - (void) generateTableView
 {
     CGRect tvrect;
-    tvrect = CGRectMake(0, 52, 507, 360);
+    tvrect = CGRectMake(7, 14, 500, 497);
     posTranView = [[UITableView alloc] initWithFrame:tvrect style:UITableViewStylePlain];
     [self.view addSubview:posTranView];
     [posTranView setBackgroundView:nil];
@@ -123,16 +145,50 @@
     NSString *entryButtonTitle = [NSString stringWithString:btnEntryclicked.titleLabel.text];
     NSString *newResString;
     int posdispWidth = 0;
-    if (transModeVal==1 | transModeVal==2 | transModeVal==3) 
+    // sales and return
+    if (transModeVal==1 | transModeVal==2) 
     {
         if (itemDict) 
         {
             if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
                 posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
+            else if ([entryButtonTitle isEqualToString:@"<--"])
+            {
+                itemDict = [NSDictionary dictionaryWithDictionary:itemDict];
+                NSString *oldText = [[NSString alloc] initWithFormat:@"%@*%@*",[itemDict valueForKey:@"ITEMNAME"],[itemDict valueForKey:@"ITEMPRICE"]];
+                NSString *curText = posDisplay.text;
+                NSString *qtyPart = [NSString stringWithString:[curText stringByReplacingOccurrencesOfString:oldText withString:@""]];
+                //NSLog(@"old text %@ and qty part %@", oldText, qtyPart);
+                if ([qtyPart length]>0) 
+                    posDisplay.text = [NSString stringWithFormat:@"%@%@", oldText, [qtyPart substringWithRange:NSMakeRange(0, [qtyPart length] - 1) ] ];
+            }
         }
         return;
     }
-    if (transModeVal==4 | transModeVal==5 | transModeVal==6) 
+    if (transModeVal==3 | transModeVal==10 | transModeVal==11) 
+    {
+        if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
+        {
+            newResString = [NSString stringWithFormat:@"%@", posDisplay.text]; 
+            if ([entryButtonTitle isEqualToString:@"."]) 
+            {
+                NSRange decimalRange = [newResString rangeOfString:entryButtonTitle options:NSCaseInsensitiveSearch];
+                if (decimalRange.location == NSNotFound) 
+                    posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
+            }
+            else
+                posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
+        }
+        else if ([entryButtonTitle isEqualToString:@"<--"])
+        {
+            NSString *curText = posDisplay.text;
+            if ([curText length]>0) 
+                posDisplay.text = [NSString stringWithFormat:@"%@", [curText substringWithRange:NSMakeRange(0, [curText length] - 1) ] ];
+        }
+        return;
+    }
+    
+    if ( transModeVal==6 | transModeVal==12)   // transModeVal==4 | transModeVal==5 |  add and less are removed
     {
         if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"] | [entryButtonTitle isEqualToString:@"."]) 
         {
@@ -146,83 +202,42 @@
             else
                 posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
         }
+        else if ([entryButtonTitle isEqualToString:@"<--"])
+        {
+            NSString *curText = posDisplay.text;
+            //NSLog(@"old text %@ and qty part %@", oldText, qtyPart);
+            if ([curText length]>0) 
+                posDisplay.text = [NSString stringWithFormat:@"%@", [curText substringWithRange:NSMakeRange(0, [curText length] - 1) ] ];
+        }
         return;
     }
     
-    if (transModeVal==7) 
-    {
-        posdispWidth = [posDisplay.text length];
-        if (posdispWidth>=7 & posdispWidth<19) 
-        {
-            if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
-                posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
-        }
-        if (posdispWidth==19) 
-        {
-            if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
-                posDisplay.text = [NSString stringWithFormat:@"%@%@*", posDisplay.text, entryButtonTitle]; 
-        }
-        if (posdispWidth>=21) 
-        {
-            if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"] | [entryButtonTitle isEqualToString:@"."]) 
-            {
-                newResString = [NSString stringWithFormat:@"%@", posDisplay.text]; 
-                if ([entryButtonTitle isEqualToString:@"."]) 
-                {
-                    NSRange decimalRange = [newResString rangeOfString:entryButtonTitle options:NSCaseInsensitiveSearch];
-                    if (decimalRange.location == NSNotFound) 
-                        posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
-                }
-                else
-                    posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
-            }
-        }
-        return;
-    }
-    if (transModeVal==8) 
-    {
-        posdispWidth = [posDisplay.text length];
-        if (posdispWidth>=7 & posdispWidth<12) 
-        {
-            if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
-                posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
-        }
-        if (posdispWidth==12) 
-        {
-            if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
-                posDisplay.text = [NSString stringWithFormat:@"%@%@*", posDisplay.text, entryButtonTitle]; 
-        }
-        if (posdispWidth>=14) 
-        {
-            if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"] | [entryButtonTitle isEqualToString:@"."]) 
-            {
-                newResString = [NSString stringWithFormat:@"%@", posDisplay.text]; 
-                if ([entryButtonTitle isEqualToString:@"."]) 
-                {
-                    NSRange decimalRange = [newResString rangeOfString:entryButtonTitle options:NSCaseInsensitiveSearch];
-                    if (decimalRange.location == NSNotFound) 
-                        posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
-                }
-                else
-                    posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
-            }
-        }
-        return;
-    }
     if (transModeVal==9) 
     {
         posdispWidth = [posDisplay.text length];
-        if (posdispWidth>=5 & posdispWidth<8) 
+        if (posdispWidth>=0 & posdispWidth<3) 
         {
             if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
                 posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
+            else if ([entryButtonTitle isEqualToString:@"<--"])
+            {
+                NSString *curText = posDisplay.text;
+                if ([curText length]>0) 
+                    posDisplay.text = [NSString stringWithFormat:@"%@", [curText substringWithRange:NSMakeRange(0, [curText length] - 1) ] ];
+            }
         }
-        if (posdispWidth==8) 
+        if (posdispWidth==3) 
         {
             if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"]) 
                 posDisplay.text = [NSString stringWithFormat:@"%@%@*", posDisplay.text, entryButtonTitle]; 
+            else if ([entryButtonTitle isEqualToString:@"<--"])
+            {
+                NSString *curText = posDisplay.text;
+                if ([curText length]>0) 
+                    posDisplay.text = [NSString stringWithFormat:@"%@", [curText substringWithRange:NSMakeRange(0, [curText length] - 1) ] ];
+            }
         }
-        if (posdispWidth>=10) 
+        if (posdispWidth>=5) 
         {
             if ([entryButtonTitle isEqualToString:@"0"] | [entryButtonTitle isEqualToString:@"1"] | [entryButtonTitle isEqualToString:@"2"] | [entryButtonTitle isEqualToString:@"3"] | [entryButtonTitle isEqualToString:@"4"] | [entryButtonTitle isEqualToString:@"5"] | [entryButtonTitle isEqualToString:@"6"] | [entryButtonTitle isEqualToString:@"7"] | [entryButtonTitle isEqualToString:@"8"] | [entryButtonTitle isEqualToString:@"9"] | [entryButtonTitle isEqualToString:@"."]) 
             {
@@ -235,6 +250,12 @@
                 }
                 else
                     posDisplay.text = [NSString stringWithFormat:@"%@%@", posDisplay.text, entryButtonTitle]; 
+            }
+            else if ([entryButtonTitle isEqualToString:@"<--"])
+            {
+                NSString *curText = posDisplay.text;
+                if ([curText length]>5) 
+                    posDisplay.text = [NSString stringWithFormat:@"%@", [curText substringWithRange:NSMakeRange(0, [curText length] - 1) ] ];
             }
         }
         return;
@@ -248,72 +269,81 @@
     NSString *btnLabel = [NSString stringWithString:btnClicked.titleLabel.text];
     if ([currMode isEqualToString:@"I"]) 
     {
-        posDisplay.text =[[NSString alloc] initWithFormat:@"%@*", btnClicked.titleLabel.text];
-        transModeVal = [self getTransModeForTitle:btnLabel];
-        if (transModeVal==3) 
-            [self getVoidConfirmation];
+        [self setOperationMode:btnLabel];
+        //posDisplay.text =[[NSString alloc] initWithFormat:@"%@*", btnClicked.titleLabel.text];
+        //transModeVal = [self getTransModeForTitle:btnLabel];
+        /*if (transModeVal==3) 
+            [self getVoidConfirmation];*/
         itemDict = nil;
     }
 }
 
-- (int) getTransModeForTitle:(NSString*) p_title
+- (void) setOperationMode:(NSString*) p_opMode
 {
-    int l_returnval = 0;
-    if ([p_title isEqualToString:@"Sales"]) 
-        l_returnval = 1;
-    else if ([p_title isEqualToString:@"Return"])
-        l_returnval = 2;
-    else if ([p_title isEqualToString:@"Void"])
-        l_returnval = 3;
-    else if ([p_title isEqualToString:@"Add"])
-        l_returnval = 4;
-    else if ([p_title isEqualToString:@"Less"])
-        l_returnval = 5;
-    else if ([p_title isEqualToString:@"Cash"])
-        l_returnval = 6;
-    else if ([p_title isEqualToString:@"Member"])
-        l_returnval = 7;
-    else if ([p_title isEqualToString:@"Cheque"])
-        l_returnval = 8;
-    else if ([p_title isEqualToString:@"Card"])
-        l_returnval = 9;
-    return l_returnval;
-}
-
-- (void) getVoidConfirmation
-{
-    if ([currMode isEqualToString:@"I"]) 
+    posDisplay.text = @"";
+    if ([p_opMode isEqualToString:@"Sales"]) 
+    {
+        posDisplay.backgroundColor = salesColor;
+        transModeVal = 1;
+    }
+    else if ([p_opMode isEqualToString:@"Return"])
+    {
+        posDisplay.backgroundColor = returnColor;
+        transModeVal = 2;
+    }
+    else if ([p_opMode isEqualToString:@"Void"])
     {
         if ([dataForDisplay count]>0) 
         {
-            NSDictionary *tmpDict = [dataForDisplay objectAtIndex:[dataForDisplay count]-1];
-            NSString *opType = [tmpDict valueForKey:@"OPERATION"];
-            if ([opType isEqualToString:@"Sales"] | [opType isEqualToString:@"Return"]) 
-            {
-                dAlert = [[UIAlertView alloc] initWithTitle:@" " message:@"Are you sure\nto Void previous Entry?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Void", nil];
-                dAlert.cancelButtonIndex = 0;
-                dAlert.delegate = self;
-                dAlert.tag = 3;
-                [dAlert show];
-            }
-            else
-            {
-                [self showAlertMessage:@"No voidable transaction!"];
-                posDisplay.text =[[NSString alloc] initWithFormat:@"%@*", @"Sales"];
-                transModeVal = 1;
-            }
+            posDisplay.text =  [[NSString alloc] initWithFormat:@"%d", [dataForDisplay count]];
+            posDisplay.backgroundColor = voidColor;
+            transModeVal = 3;
         }
         else
         {
-            [self showAlertMessage:@"No voidable transaction!"];
-            posDisplay.text =[[NSString alloc] initWithFormat:@"%@*", @"Sales"];
+            posDisplay.backgroundColor = salesColor;
             transModeVal = 1;
         }
+    }
+    else if ([p_opMode isEqualToString:@"Disc %"])
+    {
+        posDisplay.backgroundColor = discpercColor;
+        transModeVal = 11;
+    }
+    else if ([p_opMode isEqualToString:@"Disc Amt"])
+    {
+        posDisplay.backgroundColor = discamtColor;
+        transModeVal = 12;
+    }
+    else if ([p_opMode isEqualToString:@"Cash"])
+    {
+        posDisplay.backgroundColor = cashColor;
+        transModeVal = 6;
+    }
+    else if ([p_opMode isEqualToString:@"Repeat"])
+    {
+        if ([dataForDisplay count]>0) 
+        {
+            posDisplay.text =  [[NSString alloc] initWithFormat:@"%d", [dataForDisplay count]];
+            posDisplay.backgroundColor = repeatColor;
+            transModeVal = 10;
+        }
+        else
+        {
+            posDisplay.backgroundColor = salesColor;
+            transModeVal = 1;
+        }
+    }
+    else if ([p_opMode isEqualToString:@"Card"])
+    {
+        posDisplay.backgroundColor = cardColor;
+        transModeVal = 9;
     }
 }
 
 - (void) alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
+    NSDictionary *holdBillData;
     if (buttonIndex!=0) 
     {
         switch (alertView.tag) 
@@ -321,8 +351,20 @@
             case 3:
                 [self processVoidTransaction];
                 break;
+            case 52:
+                holdBillData = [hldBillSelect returnSelectedItem];
+                if (holdBillData) 
+                    [self reCallHoldBill:holdBillData];
+                else
+                    [self showAlertMessage:@"No bill is selected"];
+                break;
             case 99:
                 [self saveDataForMode:@"Cancel"];
+                break;
+            case 100:
+                //[[NSNotxxificationCenter defaultCenter] removeObserver:self];
+                //[[NSNotificaxxtionCenter defaultCenter] postNotificationName:@"doReLogin" object:self userInfo:nil];
+                _reloginCallBack(nil);
                 break;
             default:
                 break;
@@ -333,7 +375,8 @@
         switch (alertView.tag) 
         {
             case 3:
-                posDisplay.text =[[NSString alloc] initWithFormat:@"%@*", @"Sales"];
+                //posDisplay.text =[[NSString alloc] initWithFormat:@"%@*", @"Sales"];
+                [self setOperationMode:@"Sales"];
                 transModeVal = 1;
                 break;
             default:
@@ -341,6 +384,58 @@
         }
     }
 }
+
+- (void) reCallHoldBill:(NSDictionary*) p_holdBillInfo
+{
+    //[[NSNotificaxxtionCenter defaultCenter] addObserver:self selector:@selector(recallDataGenerated:)  name:@"recallDataNotify_POS" object:nil];
+    actIndicator.hidden = NO;
+    [actIndicator startAnimating];
+    METHODCALLBACK l_wsReturnMethod = ^ (NSDictionary* p_dictInfo)
+    {
+        [self recallDataGenerated:p_dictInfo];
+    };  
+    posWSCall = [[posWSProxy alloc] initWithReportType:@"RECALLHOLDDATA" andInputParams:p_holdBillInfo andResponseMethod:l_wsReturnMethod];
+    actionView.userInteractionEnabled = NO;
+    entryView.userInteractionEnabled = NO;
+    confirmButton.enabled = NO;
+}
+
+- (void) recallDataGenerated:(NSDictionary*) holdData
+{
+    actIndicator.hidden = YES;
+    [actIndicator stopAnimating];
+    NSArray *mdArray = [[NSArray alloc] initWithArray:[holdData valueForKey:@"data"] copyItems:YES];
+    if ([mdArray count]>0) 
+    {
+        for (NSDictionary *tmpDict in mdArray) 
+        {
+            int l_datatype = [[tmpDict valueForKey:@"DATATYPE"] intValue];
+            if (l_datatype==1) 
+            {
+                txtBillNo.text = @"";
+                _prevBillId = [[tmpDict valueForKey:@"BILLID"] intValue];
+            }
+            else
+            {
+                NSMutableDictionary *newDict = [NSMutableDictionary dictionaryWithObjectsAndKeys:[tmpDict valueForKey:@"TRANSTYPE"], @"OPERATION", [tmpDict valueForKey:@"POSDESCRIPTION"], @"DESCRIPTION", [tmpDict valueForKey:@"UNITPRICE"], @"PRICE",[NSNumber numberWithInt:[[tmpDict valueForKey:@"TRANSQTY"] intValue]], @"QTY",[NSNumber numberWithDouble:[[tmpDict valueForKey:@"TRANSAMT"] doubleValue]], @"AMOUNT", [tmpDict valueForKey:@"POSITEMID"], @"POSITEMID", [tmpDict valueForKey:@"TRANSSIGN"], @"TRANSSIGN" , nil];
+                [self addDictionaryToDisplay:newDict];
+            }
+        }
+        [posTranView reloadData];
+        itemDict = nil;
+        //posDisplay.text = @"Sales*";
+        [self setOperationMode:@"Sales"];
+        transModeVal = 1;
+        [self setSummaryFieldAndBalance];
+    }
+    else
+        [self showAlertMessage:@"No valid records found"];
+    actionView.userInteractionEnabled = YES;
+    entryView.userInteractionEnabled = YES;
+    confirmButton.enabled = YES;
+    //[[NSNotificatixxonCenter defaultCenter] removeObserver:self name:@"recallDataNotify_POS" object:nil];
+}
+
 
 - (void) processVoidTransaction
 {
@@ -358,7 +453,8 @@
         [posTranView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationNone];
         [posTranView selectRowAtIndexPath:newPath animated:NO scrollPosition:UITableViewScrollPositionBottom];
         itemDict = nil;
-        posDisplay.text = @"Sales*";
+        //posDisplay.text = @"Sales*";
+        [self setOperationMode:@"Sales"];
         transModeVal = 1;
         [self setSummaryFieldAndBalance];
     }
@@ -368,10 +464,10 @@
 {
     int l_transQty = 0;
     double l_transAmt = 0;
-    NSString *l_barCode;
-    NSString *l_chequeNo;
+    /*NSString *l_barCode;
+    NSString *l_chequeNo;*/
     NSString *l_cardNo;
-    NSDictionary *dictForDisp;
+    NSMutableDictionary *dictForDisp;
     int dispDataWidth = 0;
     if ([currMode isEqualToString:@"I"]) 
     {
@@ -389,9 +485,10 @@
                     [self showAlertMessage:@"Quantity is not valid"];
                 else
                 {
-                    [self addNewItemToGrid:@"Sales" withQty:l_transQty andTransSign:1];
+                    [self addNewItemToGrid:1 withQty:l_transQty andTransSign:1];
                     itemDict = nil;
-                    posDisplay.text = @"Sales*";
+                    //posDisplay.text = @"Sales*";
+                    [self setOperationMode:@"Sales"];
                     transModeVal = 1;
                 }
                 break;
@@ -406,133 +503,165 @@
                     [self showAlertMessage:@"Quantity is not valid"];
                 else
                 {
-                    [self addNewItemToGrid:@"Return" withQty:l_transQty andTransSign:-1];
+                    [self addNewItemToGrid:2 withQty:l_transQty andTransSign:-1];
                     itemDict = nil;
-                    posDisplay.text = @"Sales*";
+                    //posDisplay.text = @"Sales*";
+                    [self setOperationMode:@"Sales"];
                     transModeVal = 1;
                 }
                 break;
-            case 4:
-                l_transAmt = [self getAmtFromDisplay:posDisplay.text withTrans:@"Add"];
-                if (l_transAmt==0) 
-                    [self showAlertMessage:@"Amount is not valid"];
+            case 3: // void transaction
+                l_transQty = [self getQtyFromDisplay:posDisplay.text withTrans:@"Void"];
+                if (l_transQty==0) 
+                    [self showAlertMessage:@"Item no is not valid!"];
                 else
                 {
-                    //[self addNewItemToGrid:@"Cash" withQty:l_transQty andTransSign:-1];
-                    [self addNewAmountToGrid:@"Add" withAmt:l_transAmt andTransSign:-1];
+                    [self voidTheItemWithSlNo:l_transQty];
                     itemDict = nil;
-                    posDisplay.text = @"Sales*";
-                    transModeVal = 1;
-                }
-                break;
-            case 5:
-                l_transAmt = [self getAmtFromDisplay:posDisplay.text withTrans:@"Less"];
-                if (l_transAmt==0) 
-                    [self showAlertMessage:@"Amount is not valid"];
-                else
-                {
-                    //[self addNewItemToGrid:@"Cash" withQty:l_transQty andTransSign:-1];
-                    [self addNewAmountToGrid:@"Less" withAmt:l_transAmt andTransSign:-1];
-                    itemDict = nil;
-                    posDisplay.text = @"Sales*";
+                    //posDisplay.text = @"Sales*";
+                    [self setOperationMode:@"Sales"];
                     transModeVal = 1;
                 }
                 break;
             case 6: // cash transaction
-                l_transAmt = [self getAmtFromDisplay:posDisplay.text withTrans:@"Cash"];
+                l_transAmt = [posDisplay.text doubleValue];
                 if (l_transAmt==0) 
                     [self showAlertMessage:@"Amount is not valid"];
                 else
                 {
                     //[self addNewItemToGrid:@"Cash" withQty:l_transQty andTransSign:-1];
-                    [self addNewAmountToGrid:@"Cash" withAmt:l_transAmt andTransSign:-1];
+                    //[self addNewAmountToGrid:6 withAmt:l_transAmt andTransSign:-1];
+                    NSMutableDictionary *dictForDisp = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", 6], @"OPERATION", @"Cash" , @"DESCRIPTION", [NSNumber numberWithDouble:l_transAmt], @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY", [NSNumber numberWithDouble:l_transAmt], @"AMOUNT",[NSString stringWithString:@"0"] , @"POSITEMID",[NSString stringWithFormat:@"%d",-1], @"TRANSSIGN" , nil];
+                    [self addDictionaryToDisplay:dictForDisp];
                     itemDict = nil;
-                    posDisplay.text = @"Sales*";
+                    //posDisplay.text = @"Sales*";
+                    [self setOperationMode:@"Sales"];
                     transModeVal = 1;
                 }
                 break;
-            case 7:
-                dispDataWidth = [posDisplay.text length];
-                if (dispDataWidth<21) 
-                {
-                    [self showAlertMessage:@"Data is not in valid format"];
-                    return;
-                }
-                l_barCode = [posDisplay.text substringWithRange:NSMakeRange(7, 13)];
-                l_transAmt = [[posDisplay.text substringWithRange:NSMakeRange(21, dispDataWidth-21)] doubleValue];
-                if (l_transAmt==0) 
-                {
-                    [self showAlertMessage:@"The amount cannot be zero"];
-                    return;
-                }
-                [self addMemberInfoAfterVerified:l_barCode withAmount:l_transAmt];
-            case 8:
-                dispDataWidth = [posDisplay.text length];
-                if (dispDataWidth<14) 
-                {
-                    [self showAlertMessage:@"Data is not in valid format"];
-                    return;
-                }
-                l_chequeNo = [posDisplay.text substringWithRange:NSMakeRange(7, 6)];
-                l_transAmt = [[posDisplay.text substringWithRange:NSMakeRange(14, dispDataWidth-14)] doubleValue];
-                if (l_transAmt==0) 
-                {
-                    [self showAlertMessage:@"The amount cannot be zero"];
-                    return;
-                }
-                dictForDisp = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithString:@"Cheque"] , @"OPERATION",[NSString stringWithFormat:@"%@:%@", @"Cheque", l_chequeNo], @"DESCRIPTION", [NSNumber numberWithDouble:l_transAmt] , @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY",[NSNumber numberWithDouble:l_transAmt], @"AMOUNT",[NSString stringWithString:@"0"] , @"POSITEMID",[NSString stringWithFormat:@"%d",-1], @"TRANSSIGN" , nil];
-                [self addDictionaryToDisplay:dictForDisp];
-                itemDict = nil;
-                posDisplay.text = @"Sales*";
-                transModeVal = 1;
-                break;
             case 9:
                 dispDataWidth = [posDisplay.text length];
-                if (dispDataWidth<10) 
+                if (dispDataWidth<5) 
                 {
                     [self showAlertMessage:@"Data is not in valid format"];
                     return;
                 }
-                l_cardNo = [posDisplay.text substringWithRange:NSMakeRange(5, 4)];
-                l_transAmt = [[posDisplay.text substringWithRange:NSMakeRange(10, dispDataWidth-10)] doubleValue];
+                l_cardNo = [posDisplay.text substringWithRange:NSMakeRange(0, 4)];
+                l_transAmt = [[posDisplay.text substringWithRange:NSMakeRange(5, dispDataWidth-5)] doubleValue];
                 if (l_transAmt==0) 
                 {
                     [self showAlertMessage:@"The amount cannot be zero"];
                     return;
                 }
-                dictForDisp = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithString:@"Card"] , @"OPERATION",[NSString stringWithFormat:@"%@:%@", @"Card", l_cardNo], @"DESCRIPTION", [NSNumber numberWithDouble:l_transAmt] , @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY",[NSNumber numberWithDouble:l_transAmt], @"AMOUNT",[NSString stringWithString:@"0"] , @"POSITEMID",[NSString stringWithFormat:@"%d",-1], @"TRANSSIGN" , nil];
+                dictForDisp = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d",9] , @"OPERATION",[NSString stringWithFormat:@"%@: %@", @"Card", l_cardNo], @"DESCRIPTION", [NSNumber numberWithDouble:l_transAmt] , @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY",[NSNumber numberWithDouble:l_transAmt], @"AMOUNT",[NSString stringWithString:@"0"] , @"POSITEMID",[NSString stringWithFormat:@"%d",-1], @"TRANSSIGN" , nil];
                 [self addDictionaryToDisplay:dictForDisp];
                 itemDict = nil;
-                posDisplay.text = @"Sales*";
+                //posDisplay.text = @"Sales*";
+                [self setOperationMode:@"Sales"];
                 transModeVal = 1;
                 break;
-                
+            case 10:  // repeat transaction
+                l_transQty = [self getQtyFromDisplay:posDisplay.text withTrans:@"Repeat"];
+                if (l_transQty==0) 
+                    [self showAlertMessage:@"Item no is not valid!"];
+                else
+                {
+                    dictForDisp = [[NSMutableDictionary alloc] initWithDictionary:[dataForDisplay objectAtIndex:l_transQty-1] copyItems:YES];
+                    [self addDictionaryToDisplay:dictForDisp];
+                    itemDict = nil;
+                    //posDisplay.text = @"Sales*";
+                    [self setOperationMode:@"Sales"];
+                    transModeVal = 1;
+                }
+                break;
+            case 11:
+                l_transQty = [self getQtyFromDisplay:posDisplay.text withTrans:@"Disc %"];
+                if (l_transQty==0 | l_transQty>100) 
+                    [self showAlertMessage:@"Perc is not valid!"];
+                else
+                {
+                    NSString *percDesc = [[NSString alloc] initWithFormat:@"Disc Perc", l_transQty];
+                    l_transAmt = [[frmFloat numberFromString:txtTotAmount.text] doubleValue] * ((double) l_transQty) / 100.0 ;
+                    if (l_transAmt>0) 
+                    {
+                        NSMutableDictionary *dictForDisp = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", 11], @"OPERATION", percDesc , @"DESCRIPTION", [NSNumber numberWithDouble:l_transAmt], @"PRICE",[NSString stringWithFormat:@"%d", l_transQty], @"QTY", [NSNumber numberWithDouble:l_transAmt], @"AMOUNT",[NSString stringWithString:@"0"] , @"POSITEMID",[NSString stringWithFormat:@"%d",-1], @"TRANSSIGN" , nil];
+                        [self addDictionaryToDisplay:dictForDisp];
+                        itemDict = nil;
+                        //posDisplay.text = @"Sales*";
+                        [self setOperationMode:@"Sales"];
+                        transModeVal = 1;
+                    }
+                    else
+                        [self showAlertMessage:@"Discount amount is not valid"];
+                }
+                break;
+            case 12:
+                l_transAmt = [posDisplay.text doubleValue];
+                if (l_transAmt<=0 ) 
+                    [self showAlertMessage:@"Amount is not valid!"];
+                else
+                {
+                    NSString *amtDesc = [[NSString alloc] initWithString:@"Disc Amount"];
+                    if (l_transAmt>0) 
+                    {
+                        NSMutableDictionary *dictForDisp = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", 12], @"OPERATION", amtDesc , @"DESCRIPTION", [NSNumber numberWithDouble:l_transAmt], @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY", [NSNumber numberWithDouble:l_transAmt], @"AMOUNT",[NSString stringWithString:@"0"] , @"POSITEMID",[NSString stringWithFormat:@"%d",-1], @"TRANSSIGN" , nil];
+                        [self addDictionaryToDisplay:dictForDisp];
+                        itemDict = nil;
+                        //posDisplay.text = @"Sales*";
+                        [self setOperationMode:@"Sales"];
+                        transModeVal = 1;
+                    }
+                    else
+                        [self showAlertMessage:@"Discount amount is not valid"];
+                }
+                break;
             default:
                 break;
         }
     }
 }
 
+
+- (void) voidTheItemWithSlNo:(int) p_slNo
+{
+    //NSMutableDictionary *tmpDict = [[NSMutableDictionary dictionaryWithDictionary:[dataForDisplay objectAtIndex:p_slNo-1]] copy];
+    NSMutableDictionary *tmpDict = [[NSMutableDictionary alloc] initWithDictionary:[dataForDisplay objectAtIndex:p_slNo-1] copyItems:YES];
+    int isVoided = [[tmpDict valueForKey:@"ISVOIDED"] intValue];
+    if (isVoided==0) 
+        [tmpDict setValue:[NSString stringWithString:@"1"] forKey:@"ISVOIDED"];
+    else
+        [tmpDict setValue:[NSString stringWithString:@"0"] forKey:@"ISVOIDED"];
+    [dataForDisplay replaceObjectAtIndex:(p_slNo-1) withObject:tmpDict];
+    NSIndexPath *voidIndPath = [NSIndexPath indexPathForRow:p_slNo inSection:0];
+    NSArray *updateInfo = [[NSArray alloc] initWithObjects:voidIndPath, nil];
+    //[dataForDisplay replaceObjectAtIndex:voidIndPath.row withObject:returnedDict];
+    [posTranView reloadRowsAtIndexPaths:updateInfo withRowAnimation:UITableViewRowAnimationNone];
+    [self setSummaryFieldAndBalance];
+}
+
 - (void) addMemberInfoAfterVerified:(NSString*) p_memberBarcode withAmount:(double) p_transAmt
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(memberDataGenerated:)  name:@"memberDataNotify_POS" object:nil];
+    //[[NSNotificxxationCenter defaultCenter] addObserver:self selector:@selector(memberDataGenerated:)  name:@"memberDataNotify_POS" object:nil];
     actIndicator.hidden = NO;
     [actIndicator startAnimating];
     NSDictionary *inputDict = [NSDictionary dictionaryWithObjectsAndKeys:p_memberBarcode,@"p_memberbarcode", [NSNumber numberWithDouble:p_transAmt],@"p_transamt", nil];
-    posWSCall = [[posWSProxy alloc] initWithReportType:@"MEMBERBARCODECHECK" andInputParams:inputDict andNotificatioName:@"memberDataNotify_POS"];
+    METHODCALLBACK l_wsReturnMethod = ^ (NSDictionary* p_dictInfo)
+    {
+        [self recallDataGenerated:p_dictInfo];
+    };  
+    posWSCall = [[posWSProxy alloc] initWithReportType:@"MEMBERBARCODECHECK" andInputParams:inputDict andResponseMethod:l_wsReturnMethod];
     actionView.userInteractionEnabled = NO;
     entryView.userInteractionEnabled = NO;
     confirmButton.enabled = NO;
 }
 
-- (void) memberDataGenerated:(NSNotification*) memberData
+- (void) memberDataGenerated:(NSDictionary*) memberData
 {
     int l_memberId = 0;
     actIndicator.hidden = YES;
     [actIndicator stopAnimating];
-    NSDictionary *recdData = [memberData userInfo];
-    NSArray *mdArray = [[NSArray alloc] initWithArray:[recdData valueForKey:@"data"] copyItems:YES];
-    NSDictionary *inputParams = [[memberData userInfo] valueForKey:@"inputparams"];
+    NSArray *mdArray = [[NSArray alloc] initWithArray:[memberData valueForKey:@"data"] copyItems:YES];
+    NSDictionary *inputParams = [memberData valueForKey:@"inputparams"];
     if ([mdArray count]>0) 
     {
         NSDictionary *tmpDict = [mdArray objectAtIndex:0];
@@ -545,10 +674,11 @@
             //NSString *mbrCurrStatus =[[NSString alloc] initWithFormat:@"%@",[tmpDict valueForKey:@"CURRSTATUS"]];
             /*if ([mbrCurrStatus isEqualToString:@"Active"]) 
             {*/
-                NSDictionary *dictForDisp = [NSDictionary dictionaryWithObjectsAndKeys:[NSString stringWithString:@"Member"] , @"OPERATION", [NSString stringWithFormat:@"%@ - %@ %@" , [inputParams valueForKey:@"p_memberbarcode"], [tmpDict valueForKey:@"FIRSTNAME"],[tmpDict valueForKey:@"LASTNAME"]], @"DESCRIPTION", [inputParams valueForKey:@"p_transamt"], @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY",[inputParams valueForKey:@"p_transamt"], @"AMOUNT",[tmpDict valueForKey:@"MEMBERID"], @"POSITEMID",[NSString stringWithFormat:@"%d",-1], @"TRANSSIGN" , nil];
+                NSMutableDictionary *dictForDisp = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithString:@"Member"] , @"OPERATION", [NSString stringWithFormat:@"%@ - %@ %@" , [inputParams valueForKey:@"p_memberbarcode"], [tmpDict valueForKey:@"FIRSTNAME"],[tmpDict valueForKey:@"LASTNAME"]], @"DESCRIPTION", [inputParams valueForKey:@"p_transamt"], @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY",[inputParams valueForKey:@"p_transamt"]   , @"AMOUNT",[tmpDict valueForKey:@"MEMBERID"], @"POSITEMID",[NSString stringWithFormat:@"%d",-1], @"TRANSSIGN" , nil];
                 [self addDictionaryToDisplay:dictForDisp];
                 itemDict = nil;
-                posDisplay.text = @"Sales*";
+                //posDisplay.text = @"Sales*";
+                [self setOperationMode:@"Sales"];
                 transModeVal = 1;
             /*}
             else
@@ -560,11 +690,13 @@
     actionView.userInteractionEnabled = YES;
     entryView.userInteractionEnabled = YES;
     confirmButton.enabled = YES;
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"memberDataNotify_POS" object:nil];
+    //[[NSNotificatxxionCenter defaultCenter] removeObserver:self name:@"memberDataNotify_POS" object:nil];
 }
 
-- (void) addDictionaryToDisplay:(NSDictionary*) p_dispDict
+- (void) addDictionaryToDisplay:(NSMutableDictionary*) p_dispDict
 {
+    holdButton.enabled = YES;
+    recallButton.enabled = NO;
     [dataForDisplay addObject:p_dispDict];
     NSIndexPath *newPath = [NSIndexPath indexPathForRow:[dataForDisplay count] inSection:0];
     NSArray *indexArray = [NSArray arrayWithObjects:newPath, nil];
@@ -574,19 +706,14 @@
 }
 
 
-- (void) addNewItemToGrid:(NSString*) p_transType withQty:(int) p_transQty andTransSign:(int) p_transSign
+- (void) addNewItemToGrid:(int) p_transType withQty:(int) p_transQty andTransSign:(int) p_transSign
 {
     double l_amount = [[itemDict valueForKey:@"ITEMPRICE"] doubleValue]* ((double) p_transQty);
-    NSDictionary *dictForDisp = [NSDictionary dictionaryWithObjectsAndKeys:p_transType, @"OPERATION", [itemDict valueForKey:@"ITEMNAME"], @"DESCRIPTION", [itemDict valueForKey:@"ITEMPRICE"], @"PRICE",[NSString stringWithFormat:@"%d", p_transQty], @"QTY", [NSNumber numberWithDouble:l_amount], @"AMOUNT",[itemDict valueForKey:@"POSITEMID"], @"POSITEMID",[NSString stringWithFormat:@"%d",p_transSign], @"TRANSSIGN" , nil];
+    NSMutableDictionary *dictForDisp = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSString stringWithFormat:@"%d", p_transType], @"OPERATION", [itemDict valueForKey:@"ITEMNAME"], @"DESCRIPTION", [itemDict valueForKey:@"ITEMPRICE"], @"PRICE",[NSString stringWithFormat:@"%d", p_transQty], @"QTY", [NSNumber numberWithDouble:l_amount], @"AMOUNT",[itemDict valueForKey:@"POSITEMID"], @"POSITEMID",[NSString stringWithFormat:@"%d",p_transSign], @"TRANSSIGN" , nil];
     [self addDictionaryToDisplay:dictForDisp];
 }
 
-- (void) addNewAmountToGrid:(NSString*) p_transType withAmt:(double) p_transAmt andTransSign:(int) p_transSign
-{
-    NSDictionary *dictForDisp = [NSDictionary dictionaryWithObjectsAndKeys:p_transType, @"OPERATION", p_transType , @"DESCRIPTION", 
-                                 [NSNumber numberWithDouble:p_transAmt], @"PRICE",[NSString stringWithFormat:@"%d", 1], @"QTY", [NSNumber numberWithDouble:p_transAmt], @"AMOUNT",[NSString stringWithString:@"0"] , @"POSITEMID",[NSString stringWithFormat:@"%d",p_transSign], @"TRANSSIGN" , nil];
-    [self addDictionaryToDisplay:dictForDisp];
-}
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -648,11 +775,13 @@
 - (UITableViewCell*) getCellForRow:(int) p_rowNo
 {
     static NSString *cellid=@"CellTxn";
-    NSDictionary *tmpDict = [dataForDisplay objectAtIndex:p_rowNo-1];
-    UILabel *lbl1, *lbl2, *lbl3, *lbl4, *lblDivider;
+    NSMutableDictionary *tmpDict = [dataForDisplay objectAtIndex:p_rowNo-1];
+    //NSLog(@"tmp dict is %@", tmpDict);
+    UILabel *lbl1, *lbl2, *lbl3, *lbl4, *lblDivider, *lblStriker;
+    int isVoided = 0;
     UIColor *lblColor;
     int   cellHeight, xPosition, xWidth ;
-    NSString *opType;
+    int opType;
     cellHeight = 40;
     UITableViewCell  *cell = [posTranView dequeueReusableCellWithIdentifier:cellid];
     if (cell == nil) 
@@ -670,7 +799,7 @@
         lbl1.textColor = [UIColor blackColor];
         [cell.contentView addSubview:lbl1];
         
-        xPosition += xWidth + 1;xWidth = 220;
+        xPosition += xWidth + 1;xWidth = 245;
         lblDivider = [[UILabel alloc] initWithFrame:CGRectMake(xPosition-1, 0, 1, cellHeight)];
         lblDivider.text = @"";
         lblDivider.backgroundColor = [UIColor grayColor];
@@ -684,7 +813,7 @@
         lbl2.textColor = [UIColor blackColor];
         [cell.contentView addSubview:lbl2];
         
-        xPosition += xWidth+1; xWidth = 70;
+        xPosition += xWidth+1; xWidth = 77;
 
         lblDivider = [[UILabel alloc] initWithFrame:CGRectMake(xPosition-1, 0, 1, cellHeight)];
         lblDivider.text = @"";
@@ -698,7 +827,7 @@
         lbl3.textColor = [UIColor blackColor];
         [cell.contentView addSubview:lbl3];
         
-        xPosition += xWidth+1; xWidth = 116;
+        xPosition += xWidth+1; xWidth = 115;
 
         lblDivider = [[UILabel alloc] initWithFrame:CGRectMake(xPosition-1, 0, 1, cellHeight)];
         lblDivider.text = @"";
@@ -711,9 +840,18 @@
         lbl4.textAlignment = UITextAlignmentRight;
         lbl4.textColor = [UIColor blackColor];
         [cell.contentView addSubview:lbl4];
+        
+        lblStriker = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, xPosition+xWidth, cellHeight)];
+        lblStriker.font = [UIFont boldSystemFontOfSize:17.0f];
+        lblStriker.tag = 5;
+        lblStriker.textAlignment = UITextAlignmentCenter;
+        lblStriker.textColor = [UIColor blackColor];
+        lblStriker.backgroundColor = [UIColor clearColor];
+        [cell.contentView addSubview:lblStriker];
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    opType = [[NSString alloc] initWithFormat:@"%@", [tmpDict valueForKey:@"OPERATION"]];
+    opType = [[tmpDict valueForKey:@"OPERATION"] intValue];
+    isVoided = [[tmpDict valueForKey:@"ISVOIDED"] intValue];
     
     lbl1 = (UILabel*) [cell.contentView viewWithTag:1];
     lbl1.text =[NSString stringWithFormat:@"%d", p_rowNo];
@@ -729,26 +867,30 @@
     //[frm setMaximumFractionDigits:2];
     lbl4.text = [[NSString stringWithFormat:@"%@  ",[frmFloat stringFromNumber:[tmpDict valueForKey:@"AMOUNT"]]] stringByReplacingOccurrencesOfString:@" " withString:@"\u00A0"];
     
-    if ([opType isEqualToString:@"Sales"]) 
-        lblColor = [UIColor colorWithRed:205.0f/255.0f green:133.0f/255.0f blue:63.0f/255.0f alpha:1.0];
-    else if ([opType isEqualToString:@"Return"])
-        lblColor = [UIColor colorWithRed:185.0f/255.0f green:153.0f/255.0f blue:93.0f/255.0f alpha:1.0];
-    else if ([opType isEqualToString:@"Void"])
-        lblColor = [UIColor colorWithRed:155.0f/255.0f green:173.0f/255.0f blue:123.0f/255.0f alpha:1.0];
-    else if ([opType isEqualToString:@"Add"])
-        lblColor = [UIColor colorWithRed:225.0/255.0f green:193.0f/255.0f blue:153.0f/255.0f alpha:1.0];
-    else if ([opType isEqualToString:@"Less"])
-        lblColor = [UIColor colorWithRed:195.0f/255.0f green:213.0f/255.0f blue:183.0f/255.0f alpha:1.0];
-    else if ([opType isEqualToString:@"Cash"])
-        lblColor = [UIColor colorWithRed:125.0f/255.0f green:233.0f/255.0f blue:213.0f/255.0f alpha:1.0];
-    else if ([opType isEqualToString:@"Member"])
-        lblColor = [UIColor colorWithRed:65.0f/255.0f green:173.0f/255.0f blue:233.0f/255.0f alpha:1.0];
-    else if ([opType isEqualToString:@"Cheque"])
-        lblColor = [UIColor colorWithRed:105.0f/255.0f green:133.0f/255.0f blue:183.0f/255.0f alpha:1.0];
-    else if ([opType isEqualToString:@"Card"])
-        lblColor = [UIColor colorWithRed:25.0f/255.0f green:193.0f/255.0f blue:203.0f/255.0f alpha:1.0];
-        
+    if (opType==1) 
+        lblColor = salesColor;
+    else if (opType==2) 
+        lblColor = returnColor;
+    else if (opType==11) 
+    {
+        lblColor = discpercColor;
+        lbl3.text = [[NSString stringWithFormat:@"%@  %%",[frmInt stringFromNumber:[NSNumber numberWithInt:[[tmpDict valueForKey:@"QTY"] intValue]]]] stringByReplacingOccurrencesOfString:@" " withString:@"\u00A0"];
+    }
+    else if (opType==12) 
+        lblColor = discamtColor;
+    else if (opType==6) 
+        lblColor = cashColor;
+    else if (opType==9) 
+        lblColor = cardColor;
     
+    lblStriker = (UILabel*) [cell.contentView viewWithTag:5];
+    if (isVoided==1) 
+    {
+        lblStriker.text = @"-----------------------------------------------------------------------------------------------";
+        lblColor = voidColor;
+    }
+    else
+        lblStriker.text = @"";
     lbl1.backgroundColor = lblColor;
     lbl2.backgroundColor = lblColor;
     lbl3.backgroundColor = lblColor;
@@ -783,7 +925,7 @@
         lbl1.text = @"Sl#";
         [cell.contentView addSubview:lbl1];
         
-        xPosition += xWidth + 1;xWidth = 220;
+        xPosition += xWidth + 1;xWidth = 245;
         lblDivider = [[UILabel alloc] initWithFrame:CGRectMake(xPosition-1, 0, 1, cellHeight)];
         lblDivider.text = @"";
         lblDivider.backgroundColor = [UIColor grayColor];
@@ -799,7 +941,7 @@
         lbl2.text = @"Description";
         [cell.contentView addSubview:lbl2];
         
-        xPosition += xWidth+1; xWidth = 70;
+        xPosition += xWidth+1; xWidth = 77;
 
         lblDivider = [[UILabel alloc] initWithFrame:CGRectMake(xPosition-1, 0, 1, cellHeight)];
         lblDivider.text = @"";
@@ -815,7 +957,7 @@
         lbl3.text = @"Qty";
         [cell.contentView addSubview:lbl3];
         
-        xPosition += xWidth+1; xWidth = 116;
+        xPosition += xWidth+1; xWidth = 123;
 
         lblDivider = [[UILabel alloc] initWithFrame:CGRectMake(xPosition-1, 0, 1, cellHeight)];
         lblDivider.text = @"";
@@ -831,7 +973,6 @@
         lbl4.text = @"Amount";
         [cell.contentView addSubview:lbl4];
     }
-    
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
@@ -891,6 +1032,25 @@
         retBtn = [[UIBarButtonItem alloc] initWithTitle:@"New" style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
         retBtn.tag = 6;
     }
+    else if ([p_btnTask isEqualToString:@"Print"]) 
+    {
+        //retBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(ButtonPressed:)];
+        retBtn = [[UIBarButtonItem alloc] initWithTitle:@"Print" style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
+        retBtn.tag = 7;
+    }
+    else if ([p_btnTask isEqualToString:@"Bills"]) 
+    {
+        //retBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(ButtonPressed:)];
+        retBtn = [[UIBarButtonItem alloc] initWithTitle:@"Bills" style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
+        retBtn.tag = 8;
+    }
+    else if ([p_btnTask isEqualToString:@"Exit"]) 
+    {
+        //retBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(ButtonPressed:)];
+        //retBtn = [[UIBarButtonItem alloc] initWithTitle:@"Exit" style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
+        retBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(ButtonPressed:)];
+        retBtn.tag = 9;
+    }
     else
     {
         retBtn = [[UIBarButtonItem alloc] initWithTitle:p_btnTask style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
@@ -906,10 +1066,13 @@
     {
         UIBarButtonItem *btnInsert = [self getButtonForNavigation:@"New"];
         self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:btnInsert, nil];
+        self.navigationItem.title = @"Point of Sales";
         actionView.userInteractionEnabled = NO;
         entryView.userInteractionEnabled = NO;
         confirmButton.enabled = NO;
         posDisplay.text = @"";
+        holdButton.enabled = NO;
+        recallButton.enabled = YES;
     }
     
     if ([currMode isEqualToString:@"I"]) 
@@ -918,6 +1081,7 @@
         UIBarButtonItem *btnSave = [self getButtonForNavigation:@"Save"];
         //UIBarButtonItem *btnHold = [self getButtonForNavigation:@"Hold"];
         self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:btnSave, btnCancel,  nil];
+        self.navigationItem.title = @"New POS Bill";
         actionView.userInteractionEnabled = YES;
         entryView.userInteractionEnabled = YES;
         confirmButton.enabled = YES;
@@ -927,8 +1091,27 @@
         txtBalance.text = @"";
         [dataForDisplay removeAllObjects];
         [posTranView reloadData];
-        posDisplay.text = @"Sales*";
+        //posDisplay.text = @"Sales*";
+        [self setOperationMode:@"Sales"];
         transModeVal = 1;
+        holdButton.enabled = NO;
+        recallButton.enabled = YES;
+        _prevBillId = 0;
+    }
+    
+    if ([currMode isEqualToString:@"P"]) 
+    {
+        UIBarButtonItem *btnBills = [self getButtonForNavigation:@"Bills"];
+        UIBarButtonItem *btnPrint = [self getButtonForNavigation:@"Print"];
+        //UIBarButtonItem *btnHold = [self getButtonForNavigation:@"Hold"];
+        self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:btnPrint, btnBills,  nil];
+        self.navigationItem.title = @"POS Bill Preview";
+        actionView.userInteractionEnabled = NO;
+        entryView.userInteractionEnabled = NO;
+        confirmButton.enabled = NO;
+        posDisplay.text = @"";
+        holdButton.enabled = NO;
+        recallButton.enabled = YES;
     }
 }
 
@@ -937,13 +1120,12 @@
     if ([currMode isEqualToString:@"I"]) 
     {
         itemDict = [NSDictionary dictionaryWithDictionary:p_itemDict];
-        //int l_opMode =[self getOperationMode:posDisplay.text];
         switch (transModeVal) {
             case 1:
-                posDisplay.text = [[NSString alloc] initWithFormat:@"%@*%@*%@*", @"Sales",[itemDict valueForKey:@"ITEMNAME"],[itemDict valueForKey:@"ITEMPRICE"]];
+                posDisplay.text = [[NSString alloc] initWithFormat:@"%@*%@*",[itemDict valueForKey:@"ITEMNAME"],[itemDict valueForKey:@"ITEMPRICE"]];
                 break;
             case 2:
-                posDisplay.text = [[NSString alloc] initWithFormat:@"%@*%@*%@*", @"Return",[itemDict valueForKey:@"ITEMNAME"],[itemDict valueForKey:@"ITEMPRICE"]];
+                posDisplay.text = [[NSString alloc] initWithFormat:@"%@*%@*",[itemDict valueForKey:@"ITEMNAME"],[itemDict valueForKey:@"ITEMPRICE"]];
                 break;
             case 3:
                 
@@ -961,12 +1143,40 @@
 
 - (int) getQtyFromDisplay:(NSString*) p_curDisplay withTrans:(NSString*) p_transNature
 {
-    NSString *itemDesc  = [[NSString alloc] initWithFormat:@"%@*%@*%@*", p_transNature ,[itemDict valueForKey:@"ITEMNAME"],[itemDict valueForKey:@"ITEMPRICE"]];
-    NSString *restString = [p_curDisplay stringByReplacingOccurrencesOfString:itemDesc withString:@""];
-    if ([restString isEqualToString:@""]) 
-        return 1;
-    else
-        return [restString intValue];
+    int l_returnval = 0;
+    if ([p_transNature isEqualToString:@"Sales"] | [p_transNature isEqualToString:@"Return"]) 
+    {
+        NSString *itemDesc  = [[NSString alloc] initWithFormat:@"%@*%@*" ,[itemDict valueForKey:@"ITEMNAME"],[itemDict valueForKey:@"ITEMPRICE"]];
+        NSString *restString = [p_curDisplay stringByReplacingOccurrencesOfString:itemDesc withString:@""];
+        if ([restString isEqualToString:@""]) 
+            return 1;
+        else
+            return [restString intValue];
+    }
+    if ([p_transNature isEqualToString:@"Void"] | [p_transNature isEqualToString:@"Repeat"] ) 
+    {
+        NSString *curText = posDisplay.text;
+        int rowNo = [curText intValue];
+        if (rowNo<=0) 
+            l_returnval = 0;
+        else if (rowNo > [dataForDisplay count])
+            l_returnval = 0;
+        else
+            l_returnval = rowNo;
+        return l_returnval;
+    }
+    if ([p_transNature isEqualToString:@"Disc %"]) 
+    {
+        NSString *curText = posDisplay.text;
+        int l_disc = [curText intValue];
+        if (l_disc<=0) 
+            l_returnval = 0;
+        else if (l_disc > 100)
+            l_returnval = 0;
+        else
+            l_returnval = l_disc;
+        return l_returnval;
+    }
     return 0;
 }
 
@@ -978,56 +1188,6 @@
         return 0;
     else
         return [restString doubleValue];
-    return 0;
-}
-
-- (int) getOperationMode:(NSString*) p_curDisplay
-{
-    //1 -- sales, 2 -- return, 3 -- void
-    int l_retOperationMode = 0;
-    int l_dispLength = 0;
-    BOOL l_isAsterixExists = NO;
-    NSString *strBeforeAsterix;
-    if (!p_curDisplay) 
-    {
-        l_retOperationMode = 1;
-        return l_retOperationMode;
-    }
-    l_dispLength = [p_curDisplay length];
-    if (l_dispLength==0) 
-    {
-        l_retOperationMode = 1;
-        return l_retOperationMode;
-    }
-    if ([p_curDisplay rangeOfString:@"*" options:NSCaseInsensitiveSearch].location==NSNotFound) 
-        l_isAsterixExists = NO;
-    else
-        l_isAsterixExists = YES;
-    
-    if (l_isAsterixExists==NO) 
-    {
-        if ([p_curDisplay isEqualToString:@"Sales"]) 
-            l_retOperationMode = 1;
-        else if ([p_curDisplay isEqualToString:@"Return"])
-            l_retOperationMode = 2;
-        else if ([p_curDisplay isEqualToString:@"Void"])
-            l_retOperationMode = 3;
-        return l_retOperationMode;
-    }
-    
-    if (l_isAsterixExists) 
-    {
-        NSRange asterixRange = [p_curDisplay rangeOfString:@"*" options:NSCaseInsensitiveSearch];
-        strBeforeAsterix = [[NSString alloc] initWithFormat:@"%@", [p_curDisplay substringToIndex:asterixRange.location]];
-        if ([strBeforeAsterix isEqualToString:@"Sales"]) 
-            l_retOperationMode = 1;
-        else if ([strBeforeAsterix isEqualToString:@"Return"])
-            l_retOperationMode = 2;
-        else if ([strBeforeAsterix isEqualToString:@"Void"])
-            l_retOperationMode = 3;
-        return l_retOperationMode;
-    }
-    
     return 0;
 }
 
@@ -1043,16 +1203,23 @@
     double totAmount = 0;
     double finBalance = 0;
     double amtAdjusted = 0;
-    for (NSDictionary *tmpDict in dataForDisplay) 
+    int isVoided = 0;
+    for (NSMutableDictionary *tmpDict in dataForDisplay) 
     {
-        NSString *transType = [tmpDict valueForKey:@"OPERATION"];
-        if ([transType isEqualToString:@"Sales"] | [transType isEqualToString:@"Return"] | [transType isEqualToString:@"Void"] ) 
+        //NSString *transType = [tmpDict valueForKey:@"OPERATION"];
+        int transTypeVal = [[tmpDict valueForKey:@"OPERATION"] intValue];
+        isVoided = [[tmpDict valueForKey:@"ISVOIDED"] intValue];
+        //if ([transType isEqualToString:@"Sales"] | [transType isEqualToString:@"Return"] | [transType isEqualToString:@"Void"] ) 
+        if (isVoided==0) 
         {
-            totQty += [[tmpDict valueForKey:@"QTY"] intValue]*[[tmpDict valueForKey:@"TRANSSIGN"] intValue] ;
-            totAmount += [[tmpDict valueForKey:@"AMOUNT"] doubleValue] * [[tmpDict valueForKey:@"TRANSSIGN"] intValue] ;
+            if (transTypeVal ==1 | transTypeVal==2) 
+            {
+                totQty += [[tmpDict valueForKey:@"QTY"] intValue]*[[tmpDict valueForKey:@"TRANSSIGN"] intValue] ;
+                totAmount += [[tmpDict valueForKey:@"AMOUNT"] doubleValue] * [[tmpDict valueForKey:@"TRANSSIGN"] intValue] ;
+            }
+            else
+                amtAdjusted += [[tmpDict valueForKey:@"AMOUNT"] doubleValue] * [[tmpDict valueForKey:@"TRANSSIGN"] intValue] ; 
         }
-        else
-            amtAdjusted += [[tmpDict valueForKey:@"AMOUNT"] doubleValue] * [[tmpDict valueForKey:@"TRANSSIGN"] intValue] ; 
     }
     finBalance = totAmount + amtAdjusted;
     txtTotQty.text = [NSString stringWithFormat:@"%d", totQty];
@@ -1094,14 +1261,50 @@
                 [self saveDataForMode:@"Save"];
             break;
         case 5:
+            
             break;
         case 6:
             currMode = @"I";
             [self setButtonsForDiffMode];
+            break;
+        case 7: //print
+            [posPreview printContents:sender];
+            break;
+        case 8: // BILLS list
+            [posPreview removeFromSuperview];
+            posPreview = nil;
+            currMode = @"L";
+            [self setButtonsForDiffMode];
+            break;
+        case 9:
+            dAlert = [[UIAlertView alloc] initWithTitle:@" " message:@"Are you sure\nto Logout?" delegate:self cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+            dAlert.cancelButtonIndex = 0;
+            dAlert.delegate = self;
+            dAlert.tag = 100;
+            [dAlert show];
+            break;
+        case 51:
+            if ([self validateEntriesforMode:@"Hold"]) 
+                [self saveDataForMode:@"Hold"];
+            break;
+        case 52:
+            [self showHoldBillsList];
+            break;
         default:
             break;
     }
     //[self setButtonsForDiffMode];
+}
+
+- (void) showHoldBillsList
+{
+    hldBillSelect = [[holdBillsSearch alloc] init];
+    dAlert = [[UIAlertView alloc] initWithTitle:@"Pick a Bill" message:@"\n\n\n\n\n\n\n\n\n\n" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Select", nil];
+    dAlert.cancelButtonIndex = 0;
+    dAlert.delegate = self;
+    dAlert.tag = 52;
+    [dAlert addSubview:hldBillSelect];
+    [dAlert show];
 }
 
 - (BOOL) validateEntriesforMode:(NSString*) p_validateMode
@@ -1123,12 +1326,12 @@
         }
     }
     
-    
     return  YES;
 }
 
 - (void) saveDataForMode:(NSString*) p_saveMode
 {
+    int isVoided = 0;
     /*
      #define POSMASTER_XML @"<MASTER><LOCATIONID>%@</LOCATIONID><TOTQTY>%@</TOTQTY><TOTAMOUNT>%@</TOTAMOUNT><BALANCE>%@</BALANCE><PREVBILLID>%@</PREVBILLID><STATUS>%@</STATUS></MASTER>"
      
@@ -1140,25 +1343,36 @@
     NSString *billStatus;
     if ([p_saveMode isEqualToString:@"Save"]) 
         billStatus = [NSString stringWithString:@"OK"];
+    else if ([p_saveMode isEqualToString:@"Hold"])
+        billStatus = [NSString stringWithString:@"H"];
     else
         billStatus = [NSString stringWithString:@"NIL"];
     
-    l_retXML = [NSString stringWithFormat:POSMASTER_XML,[stdDefaults valueForKey:@"LOGGEDLOCATION"],txtTotQty.text, [frmFloat numberFromString:txtTotAmount.text], [frmFloat numberFromString:txtBalance.text], [NSNumber numberWithInt:_prevBillId],billStatus];
-    for (NSDictionary *tmpDict in dataForDisplay) 
+    l_retXML = [NSString stringWithFormat:POSMASTER_XML,[stdDefaults valueForKey:@"LOGGEDLOCATION"],txtTotQty.text, [frmFloat numberFromString:txtTotAmount.text], [frmFloat numberFromString:txtBalance.text], [NSNumber numberWithInt:_prevBillId],billStatus, [stdDefaults valueForKey:@"SHORTNAME"]];
+    for (NSMutableDictionary *tmpDict in dataForDisplay) 
     {
+        
+        isVoided = [[tmpDict valueForKey:@"ISVOIDED"] intValue];
         //NSLog(@"the tmpdictionary data is %@", tmpDict);
-        l_detailXML = [NSString stringWithFormat:POSDETAIL_XML,[NSNumber numberWithInt:[self getTransModeForTitle:[tmpDict valueForKey:@"OPERATION"]]],[tmpDict valueForKey:@"POSITEMID"],[tmpDict valueForKey:@"DESCRIPTION"], [tmpDict valueForKey:@"PRICE"], [tmpDict valueForKey:@"QTY"], [tmpDict valueForKey:@"AMOUNT"], [tmpDict valueForKey:@"TRANSSIGN"]];  
-        l_retXML = [NSString stringWithFormat:@"%@%@",l_retXML,l_detailXML];
+        if (isVoided==0)
+        {
+            l_detailXML = [NSString stringWithFormat:POSDETAIL_XML,[tmpDict valueForKey:@"OPERATION"],[tmpDict valueForKey:@"POSITEMID"],[tmpDict valueForKey:@"DESCRIPTION"], [tmpDict valueForKey:@"PRICE"], [tmpDict valueForKey:@"QTY"], [tmpDict valueForKey:@"AMOUNT"], [tmpDict valueForKey:@"TRANSSIGN"]];  
+            l_retXML = [NSString stringWithFormat:@"%@%@",l_retXML,l_detailXML];
+        }
     }
     l_retXML = [NSString stringWithFormat:@"%@%@%@",@"<POSDATA>",l_retXML, @"</POSDATA>"];
     l_retXML = (NSMutableString*) [self htmlEntitycode:l_retXML];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(posDataUpdated:)  name:@"posDataUpdateNotify_POS" object:nil];
+    //[[NSNotificxxationCenter defaultCenter] addObserver:self selector:@selector(posDataUpdated:)  name:@"posDataUpdateNotify_POS" object:nil];
+    METHODCALLBACK l_wsReturnMethod = ^ (NSDictionary* p_dictInfo)
+    {
+        [self posDataUpdated:p_dictInfo];
+    };  
     actIndicator.hidden = NO;
     [actIndicator startAnimating];
     NSDictionary *inputDict = [NSDictionary dictionaryWithObjectsAndKeys:l_retXML,@"p_posdata", p_saveMode, @"opmode", nil];
-    posWSCall = [[posWSProxy alloc] initWithReportType:@"ADDPOSDATA" andInputParams:inputDict andNotificatioName:@"posDataUpdateNotify_POS"];
-    if ([p_saveMode isEqualToString:@"Save"]) 
+    posWSCall = [[posWSProxy alloc] initWithReportType:@"ADDPOSDATA" andInputParams:inputDict andResponseMethod:l_wsReturnMethod];
+    if ([p_saveMode isEqualToString:@"Save"] | [p_saveMode isEqualToString:@"Hold"]) 
     {
         actionView.userInteractionEnabled = NO;
         entryView.userInteractionEnabled = NO;
@@ -1173,20 +1387,20 @@
     }
 }
 
-- (void) posDataUpdated:(NSNotification*) updatedInfo
+- (void) posDataUpdated:(NSDictionary*) updatedInfo
 {
     int l_responseCode = 0;
     NSString *l_respMessage;
     actIndicator.hidden = YES;
     [actIndicator stopAnimating];
-    NSDictionary *recdData = [updatedInfo userInfo];
-    NSDictionary *inputParams = [[updatedInfo userInfo] valueForKey:@"inputparams"];
+    NSDictionary *inputParams = [updatedInfo valueForKey:@"inputparams"];
     if ([[inputParams valueForKey:@"opmode"] isEqualToString:@"Cancel"]) 
     {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posDataUpdateNotify_POS" object:nil];
+        //[[NSNotificaxxtionCenter defaultCenter] removeObserver:self name:@"posDataUpdateNotify_POS" object:nil];
         return;
     }
-    NSArray *mdArray = [[NSArray alloc] initWithArray:[recdData valueForKey:@"data"] copyItems:YES];
+    
+    NSArray *mdArray = [[NSArray alloc] initWithArray:[updatedInfo valueForKey:@"data"] copyItems:YES];
     if ([mdArray count]>0) 
     {
         NSDictionary *tmpDict = [mdArray objectAtIndex:0];
@@ -1200,7 +1414,8 @@
             currMode = @"L";
             txtBillNo.text = [[NSString alloc] initWithFormat:@"%@", [tmpDict valueForKey:@"BILLNO"]];
             [self setButtonsForDiffMode];
-            [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posDataUpdateNotify_POS" object:nil];
+            [self generatePOSBillPreview:[tmpDict valueForKey:@"BILLID"]];
+            //[[NSNotificatxxionCenter defaultCenter] removeObserver:self name:@"posDataUpdateNotify_POS" object:nil];
             return;
         }
     }
@@ -1209,7 +1424,16 @@
     actionView.userInteractionEnabled = YES;
     entryView.userInteractionEnabled = YES;
     confirmButton.enabled = YES;
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"posDataUpdateNotify_POS" object:nil];
+    //[[NSNotixxficationCenter defaultCenter] removeObserver:self name:@"posDataUpdateNotify_POS" object:nil];
+}
+
+- (void) generatePOSBillPreview:(NSString*) p_billid
+{
+    currMode = @"P";
+    posPreview = [[genPrintView alloc] initWithIdValue:p_billid andOrientation:self.interfaceOrientation andFrame:self.view.frame andReporttype:@"posbillpreview" andIdFldName:@"billid" andNotification:@"printReturPOSBillPreview"];
+    [posPreview setForOrientation:self.interfaceOrientation];
+    [self.view addSubview:posPreview];    
+    [self setButtonsForDiffMode];
 }
 
 -(NSString *)htmlEntitycode:(NSString *)string

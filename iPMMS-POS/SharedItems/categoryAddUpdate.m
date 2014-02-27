@@ -10,6 +10,17 @@
 
 @implementation categoryAddUpdate
 
+
+- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification forEditData:(NSDictionary*) p_initData
+{
+    self = [self initWithFrame:frame forOrientation:p_intOrientation andNotification:p_notification];
+    _initDict = [NSDictionary dictionaryWithDictionary:p_initData];
+    currMode = @"Edit";
+    //[self generateTableView];
+    [self displayDataForList];
+    return self;
+}
+
 - (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification 
 {
     self = [super initWithFrame:frame];
@@ -24,6 +35,7 @@
         sBar.text = @"";
         sBar.hidden = YES;
         navBar.hidden = YES;
+        currMode = [[NSString alloc] initWithFormat:@"%@", @"Insert"];
         lblTextColor = [UIColor whiteColor];
         [self generateTableView];
     }
@@ -60,6 +72,14 @@
     [dispTV reloadData];
 }
 
+- (void) displayDataForList
+{
+    if (txtCatCode) 
+        txtCatCode.text = [[NSString alloc] initWithFormat:@"%@", [_initDict valueForKey:@"CATEGORYCODE"]];
+    if (txtCatName) 
+        txtCatName.text = [[NSString alloc] initWithFormat:@"%@", [_initDict valueForKey:@"CATEGORYNAME"]];
+}
+
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
@@ -81,7 +101,7 @@
     /*NSMutableDictionary *returnInfo = [[NSMutableDictionary alloc] init];
      [returnInfo setValue:[NSString stringWithString:@"BillCycleSelected"] forKey:@"notify"];
      [returnInfo setValue:[dataForDisplay objectAtIndex:indexPath.row] forKey:@"data"];
-     [[NSNotificationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];*/
+     [[NSNoxtificationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];*/
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -93,6 +113,7 @@
 {
     static NSString *cellid=@"CellMain";
     UITextField *txt1;
+    BOOL assignValues;
     UITableViewCell  *cell = [dispTV dequeueReusableCellWithIdentifier:cellid];
     if (cell == nil) 
     {
@@ -117,17 +138,25 @@
         txt1.text = @"";
         [cell.contentView addSubview:txt1];
         [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
+        assignValues = YES;
     }
     
     switch (p_rowno) 
     {
         case 0:
             txtCatCode = (UITextField*) [cell.contentView viewWithTag:2];
-            cell.textLabel.text = @"Cat. Code";
+            [txtCatCode setKeyboardType:UIKeyboardTypeNumberPad];
+            cell.textLabel.text = @"Code";
+            if (assignValues)
+                if (_initDict) 
+                    [self displayDataForList];
             break;
         case 1:
             txtCatName = (UITextField*) [cell.contentView viewWithTag:2];
-            cell.textLabel.text = @"Cat. Name";
+            cell.textLabel.text = @"Name";
+            if (assignValues)
+                if (_initDict) 
+                    [self displayDataForList];
             break;
         default:
             break;
@@ -215,7 +244,12 @@
 
 - (NSDictionary*) getDictionaryToUpdate
 {
-    NSMutableDictionary *returnDict = [[NSMutableDictionary alloc] initWithObjectsAndKeys:txtCatCode.text, @"p_catcode", txtCatName.text , @"p_catname" , nil];
+    NSDictionary *returnDict;
+    if ([currMode isEqualToString:@"Insert"]) 
+        returnDict = [[NSDictionary alloc] initWithObjectsAndKeys:@"0", @"p_categoryid", txtCatCode.text, @"p_catcode", txtCatName.text , @"p_catname" , nil];
+    else
+        returnDict = [[NSDictionary alloc] initWithObjectsAndKeys:[_initDict valueForKey:@"CATEGORYID"] , @"p_categoryid", txtCatCode.text, @"p_catcode", txtCatName.text , @"p_catname" , nil];
+    
     return returnDict;
 }
 

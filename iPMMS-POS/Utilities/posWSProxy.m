@@ -10,20 +10,26 @@
 
 @implementation posWSProxy
 
-- (id) initWithReportType:(NSString*) resultType andInputParams:(NSDictionary*) prmDict andNotificatioName:(NSString*) notificationName;
+- (id) initWithReportType:(NSString*) resultType andInputParams:(NSDictionary*) prmDict andResponseMethod:(METHODCALLBACK) p_methodCallback
 {
     self = [super init];
     if (self) {
         _resultType = [[NSString alloc] initWithFormat:@"%@", resultType];
-        _notificationName = [[NSString alloc] initWithFormat:@"%@", notificationName];
+        _postProxyResult = p_methodCallback;
         if (prmDict) 
             inputParms = [[NSDictionary alloc] initWithDictionary:prmDict];
         dictData = [[NSMutableArray alloc] init];
         _returnInputsAlso = NO;
+        NSUserDefaults *stdDefaults = [NSUserDefaults standardUserDefaults];
+        if ([stdDefaults valueForKey:@"LOCATIONSERVER"]) 
+            MAIN_URL = [[NSString alloc] initWithFormat:@"http://%@/", [stdDefaults valueForKey:@"LOCATIONSERVER"]];
+        else
+            MAIN_URL = [[NSString alloc] initWithFormat:@"%@", HO_URL];
         [self generateData];
     }
     return self;    
 }
+
 
 - (void) generateData
 {
@@ -31,7 +37,77 @@
     NSURL *url;
     NSMutableURLRequest *theRequest;
     NSURLConnection *theConnection;
+
+    if ([_resultType isEqualToString:@"RECALLHOLDDATA"]==YES) 
+    {
+        soapMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                       "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                       "<soap:Body>\n"
+                       "<gymGetPosBillData_pos xmlns=\"http://com.aahg.pos/\">\n"
+                       "<p_billid>%@</p_billid>\n"
+                       "</gymGetPosBillData_pos>\n"
+                       "</soap:Body>\n"
+                       "</soap:Envelope>", [inputParms valueForKey:@"BILLID"]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL,WS_ENV,RECALLHOLDDATA_URL]];
+        soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.pos/gymGetPosBillData_pos"];
+    }
     
+    if ([_resultType isEqualToString:@"HOLDBILLSLIST"]==YES) 
+    {
+        soapMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                       "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                       "<soap:Body>\n"
+                       "<gymGetPosHoldBills_pos xmlns=\"http://com.aahg.pos/\">\n"
+                       "<p_locationid>%@</p_locationid>\n"
+                       "</gymGetPosHoldBills_pos>\n"
+                       "</soap:Body>\n"
+                       "</soap:Envelope>", [inputParms valueForKey:@"p_locationid"]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL,WS_ENV,HOLDBILLSLIST_URL]];
+        soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.pos/gymGetPosHoldBills_pos"];
+    }
+
+    if ([_resultType isEqualToString:@"ADDUPDATECATEGORY"]==YES) 
+    {
+        soapMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                       "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                       "<soap:Body>\n"
+                       "<addUpdateItemCategory_pos xmlns=\"http://com.aahg.pos/\">\n"
+                       "<p_categoryid>%@</p_categoryid>\n"
+                       "<p_catcode>%@</p_catcode>\n"
+                       "<p_catname>%@</p_catname>\n"
+                       "</addUpdateItemCategory_pos>\n"
+                       "</soap:Body>\n"
+                       "</soap:Envelope>",[inputParms valueForKey:@"p_categoryid"], [inputParms valueForKey:@"p_catcode"], [inputParms valueForKey:@"p_catname"]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL,WS_ENV,CATEGORYADDUPDATE_URL]];
+        soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.pos/addUpdateItemCategory_pos"];
+    }
+    
+    if ([_resultType isEqualToString:@"POSITEMDATA"]==YES) 
+    {
+        soapMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                       "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                       "<soap:Body>\n"
+                       "<gymGetItemData_pos xmlns=\"http://com.aahg.pos/\">\n"
+                       "<p_positemid>%@</p_positemid>\n"
+                       "</gymGetItemData_pos>\n"
+                       "</soap:Body>\n"
+                       "</soap:Envelope>", [inputParms valueForKey:@"POSITEMID"]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL,WS_ENV,POSITEMDATA_URL]];
+        soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.pos/gymGetItemData_pos"];
+    }
+
+    if ([_resultType isEqualToString:@"POSCATEGORIESLIST"]==YES) 
+    {
+        soapMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                       "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
+                       "<soap:Body>\n"
+                       "<gymGetPosCategories_pos xmlns=\"http://com.aahg.pos/\" />\n"
+                       "</soap:Body>\n"
+                       "</soap:Envelope>"];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL,WS_ENV,POSCATEGORIESLIST_URL]];
+        soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.pos/gymGetPosCategories_pos"];
+    }
+
     if ([_resultType isEqualToString:@"ADDPOSDATA"]==YES) 
     {
         soapMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -67,15 +143,14 @@
         soapMessage = [NSString stringWithFormat:@"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
                        "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                        "<soap:Body>\n"
-                       "<gymAddNewItem_pos xmlns=\"http://com.aahg.pos/\">\n"
-                       "<p_itemname>%@</p_itemname>\n"
-                       "<p_itemprice>%@</p_itemprice>\n"
-                       "</gymAddNewItem_pos>\n"
+                       "<gymAddUpdateItem_pos xmlns=\"http://com.aahg.pos/\">\n"
+                       "<p_itemdata>%@</p_itemdata>\n"
+                       "</gymAddUpdateItem_pos>\n"
                        "</soap:Body>\n"
-                       "</soap:Envelope>",[inputParms valueForKey:@"p_itemname"], [inputParms valueForKey:@"p_itemprice"]];
+                       "</soap:Envelope>",[inputParms valueForKey:@"p_itemdata"]];
         
         url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL,WS_ENV,ITEMADDUPDATE_URL]];
-        soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.pos/gymAddNewItem_pos"];
+        soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.pos/gymAddUpdateItem_pos"];
     }
 
     if ([_resultType isEqualToString:@"POSITEMSLIST"]==YES) 
@@ -84,11 +159,11 @@
                        "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n"
                        "<soap:Body>\n"
                        "<gymGetPosItems_pos xmlns=\"http://com.aahg.pos/\">\n"
+                       "<p_locationid>%@</p_locationid>\n"
                        "<p_searchtext>%@</p_searchtext>\n"
                        "</gymGetPosItems_pos>\n"
                        "</soap:Body>\n"
-                       "</soap:Envelope>",[inputParms valueForKey:@"p_searchtext"]];
-        
+                       "</soap:Envelope>", [inputParms valueForKey:@"p_locationid"] , [inputParms valueForKey:@"p_searchtext"]];
         url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL,WS_ENV,POSITEMSLIST_URL]];
         soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.pos/gymGetPosItems_pos"];
     }
@@ -103,7 +178,7 @@
                        "</soap:Body>\n"
                        "</soap:Envelope>"];
         
-        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL,WS_ENV,LOCATIONS_URL]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",HO_URL,WS_ENV,LOCATIONS_URL]];
         soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.gymws/LocationsData"];
     }
     
@@ -118,7 +193,7 @@
                        "</userLogin>\n"
                        "</soap:Body>\n"
                        "</soap:Envelope>", [inputParms valueForKey:@"p_eMail"],[inputParms valueForKey:@"p_passWord"]];     
-        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",MAIN_URL, WS_ENV, LOGIN_URL]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@%@",HO_URL, WS_ENV, LOGIN_URL]];
         
         soapAction = [NSString stringWithFormat:@"%@",@"http://com.aahg.gymws/userLogin"];
     }
@@ -225,7 +300,7 @@
     if (_returnInputsAlso) 
         [returnInfo setValue:inputParms forKey:@"inputparams"];
     //NSLog(@"the returned notification is %@", _notificationName);
-    [[NSNotificationCenter defaultCenter] postNotificationName:_notificationName object:self userInfo:returnInfo];
+    _postProxyResult(returnInfo);
 }
 
 -(NSString *)htmlEntityDecode:(NSString *)string

@@ -8,9 +8,6 @@
 
 #import "AppDelegate.h"
 
-#import "itemNavigator.h"
-
-#import "posBill.h"
 
 @implementation AppDelegate
 
@@ -19,12 +16,20 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginSucceeded:) name:@"loginSucceeded" object:nil];
     
+    __block id myself = self;
     nav=[[UINavigationController alloc]init];
     nav.navigationBar.hidden=YES;
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    signIn *signin=[[signIn alloc]initWithNotificationName:@"loginSuccessful"];
+    _callBackMethod = ^ (NSDictionary* p_dictInfo)
+    {
+        [myself loginSucceeded:p_dictInfo];
+    };
+    _reloginCallBack = ^ (NSDictionary* p_dictInfo)
+    {
+        [myself makeReLogin:p_dictInfo];
+    };
+    signIn *signin=[[signIn alloc] initWithNotifyMethod:_callBackMethod];
     [nav pushViewController:signin animated:YES];
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
@@ -70,14 +75,31 @@
      */
 }
 
-- (void) loginSucceeded : (NSNotification*) loginInfo
+- (void) makeReLogin : (NSDictionary*) relogInfo
 {
-    itemNavigator *itemBrowse = [[itemNavigator alloc] initWithNibName:@"itemNavigator" bundle:nil];
-    UINavigationController *masterNavigationController = [[UINavigationController alloc] initWithRootViewController:itemBrowse];
+    [itemBrowse viewDidUnload];
+    [billTransaction viewDidUnload];
+    itemBrowse = nil;
+    billTransaction = nil;
+    [self.splitViewController viewDidUnload];
+    self.splitViewController = nil;
     
+    nav.navigationBar.hidden=YES;
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    signIn *signin=[[signIn alloc]initWithNotifyMethod:_callBackMethod];
+    [nav pushViewController:signin animated:YES];
+    self.window.rootViewController = nav;
+    [self.window makeKeyAndVisible];
+}
+
+
+- (void) loginSucceeded : (NSDictionary*) loginInfo
+{
+    itemBrowse = [[itemNavigator alloc] initWithNibName:@"itemNavigator" bundle:nil];
+    masterNavigationController = [[UINavigationController alloc] initWithRootViewController:itemBrowse];
     
-    posBill *billTransaction = [[posBill alloc] initWithNibName:@"posBill" bundle:nil]; 
-    UINavigationController *detailNavigationController = [[UINavigationController alloc] initWithRootViewController:billTransaction];
+    billTransaction = [[posBill alloc] initWithNibName:@"posBill" bundle:nil andReLoginCallback:_reloginCallBack];
+    detailNavigationController = [[UINavigationController alloc] initWithRootViewController:billTransaction];
     
     itemBrowse.posBillTransaction = billTransaction;
     

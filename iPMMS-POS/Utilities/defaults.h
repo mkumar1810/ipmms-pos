@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-//#define MAIN_URL @"http://194.170.6.30/"
-#define MAIN_URL @"http://192.168.1.8/"
+//#define HO_URL @"http://192.168.1.8/"
+#define HO_URL @"http://194.170.6.30/"
+
 #define WS_ENV @"GYMWS"
 #define M_PI        3.14159265358979323846264338327950288   /* pi */
 #define M_PI_BY_2      1.57079632679489661923132169163975144   /* pi/2 */
@@ -40,6 +41,8 @@
 #define POSMASTER_XML @"<MASTER><LOCATIONID>%@</LOCATIONID><TOTQTY>%@</TOTQTY><TOTAMOUNT>%@</TOTAMOUNT><BALANCE>%@</BALANCE><PREVBILLID>%@</PREVBILLID><STATUS>%@</STATUS><USERCODE>%@</USERCODE></MASTER>"
 
 #define POSDETAIL_XML @"<DETAIL><TRANSTYPE>%@</TRANSTYPE><POSITEMID>%@</POSITEMID><DESCRIPTION>%@</DESCRIPTION><PRICE>%@</PRICE><QTY>%@</QTY><AMOUNT>%@</AMOUNT><TRANSSIGN>%@</TRANSSIGN></DETAIL>"
+
+typedef void (^METHODCALLBACK) (NSDictionary*);
 
 @protocol defaults <NSObject>
 

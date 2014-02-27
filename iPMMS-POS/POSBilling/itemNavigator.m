@@ -41,8 +41,7 @@
 
 - (void) initialize
 {
-    currMode = [[NSString alloc] init];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(searchItemNavigationReturn:) name:@"searchItemNavigationReturn" object:nil];   
+    currMode = [[NSString alloc] initWithString:@"  "];
     if (UIInterfaceOrientationIsPortrait(self.interfaceOrientation)==YES) 
         currOrientation = UIInterfaceOrientationPortrait;
     else
@@ -53,21 +52,12 @@
     self.navigationItem.leftBarButtonItem = btnRefresh;
     
     [self.navigationController.navigationBar setTintColor:[UIColor colorWithRed:0.4 green:0.4 blue:0.4 alpha:0.4]];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(controllerNotification:)  name:@"controllerNotify" object:nil];
     [self generateItemsList];    
 }
 
-- (void) searchItemNavigationReturn:(NSNotification *)itemInfo
+- (void) searchItemNavigationReturn:(NSDictionary *)itemInfo
 {
-    [_billTransaction posItemSelectedInSearch:[[itemInfo userInfo] valueForKey:@"data"]];
-    /*currDict =[[NSDictionary alloc] initWithDictionary:[[memberInfo userInfo] valueForKey:@"data"]];
-    //NSLog(@"curr dict returned %@ and curr mode is %@", currDict,currMode);
-    if (!([currMode isEqualToString:@"I"] | [currMode isEqualToString:@"U"])) 
-    {
-        if (currDict) 
-            [self setListMode:currDict];
-    }
-    [self setViewResizedForOrientation:currOrientation];*/
+    [_billTransaction posItemSelectedInSearch:[itemInfo valueForKey:@"data"]];
 }
 
 - (void) generateItemsList
@@ -75,7 +65,17 @@
     CGRect myFrame = self.view.frame;
     myFrame.origin.y = 0;
     myFrame.origin.x = 0;
-    positemSelect = [[posItemSearch alloc] initWithFrame:myFrame forOrientation:currOrientation  andNotification:@"searchItemNavigationReturn" withNewDataNotification:@"posItemSearchGenerated_Main"];
+    METHODCALLBACK l_itemSearchReturn = ^ (NSDictionary* p_dictInfo)
+    {
+        [self searchItemNavigationReturn:p_dictInfo];
+    };
+    
+    METHODCALLBACK l_controllerCallBack = ^ (NSDictionary* p_dictInfo)
+    {
+        [self controllerNotification:p_dictInfo];
+    };
+    //positemSelect = [[posItemSearch alloc] initWithFrame:myFrame forOrientation:currOrientation  andNotification:@"searchItemNavigationReturn" withNewDataNotification:@"posItemSearchGenerated_Main"];
+    positemSelect = [[posItemSearch alloc] initWithFrame:myFrame forOrientation:currOrientation andNotifyMethod:l_itemSearchReturn andControllerCallBack:l_controllerCallBack];
     currMode = @"L";
     [self.view addSubview:positemSelect];
     [self setButtonsForDiffMode];
@@ -85,17 +85,52 @@
 {
     if ([currMode isEqualToString:@"L"]) 
     {
-        self.navigationItem.leftBarButtonItem = [self getButtonForNavigation:@"Refresh"];
-        self.navigationItem.rightBarButtonItem = [self getButtonForNavigation:@"Insert"];
+        //self.navigationItem.leftBarButtonItem = [self getButtonForNavigation:@"Refresh"];
+        self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Refresh"], nil];
+        self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Insert"], [self getButtonForNavigation:@"Edit"] , nil];
         self.navigationItem.title = @"Items";
     }
 
     if ([currMode isEqualToString:@"I"]) 
     {
-        self.navigationItem.leftBarButtonItem = [self getButtonForNavigation:@"Save"];
-        self.navigationItem.rightBarButtonItem = [self getButtonForNavigation:@"Cancel"];
+        //self.navigationItem.leftBarButtonItem = [self getButtonForNavigation:@"Save"];
+        self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Save"], nil];
+        self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Cancel"], nil];
         self.navigationItem.title = @"Add Item";
     }
+
+    if ([currMode isEqualToString:@"E"]) 
+    {
+        //self.navigationItem.leftBarButtonItem = [self getButtonForNavigation:@"Save"];
+        self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Save"], nil];
+        self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Cancel"], nil];
+        self.navigationItem.title = @"Edit Item";
+    }
+
+    if ([currMode isEqualToString:@"CL"]) 
+    {
+        //self.navigationItem.leftBarButtonItem = [self getButtonForNavigation:@"Back"];
+        self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Back"],nil];
+        self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Insert"], nil];
+        self.navigationItem.title = @"Categories";
+    }
+
+    if ([currMode isEqualToString:@"CI"]) 
+    {
+        //self.navigationItem.leftBarButtonItem = [self getButtonForNavigation:@"Save"];
+        self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Save"], nil];
+        self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Cancel"], nil];
+        self.navigationItem.title = @"Add Category";
+    }
+
+    if ([currMode isEqualToString:@"CE"]) 
+    {
+        //self.navigationItem.leftBarButtonItem = [self getButtonForNavigation:@"Save"];
+        self.navigationItem.leftBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Save"], nil];
+        self.navigationItem.rightBarButtonItems = [NSArray arrayWithObjects:[self getButtonForNavigation:@"Cancel"], nil];
+        self.navigationItem.title = @"Edit Category";
+    }
+
 }
 
 
@@ -141,6 +176,16 @@
         retBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(ButtonPressed:)];
         retBtn.tag = 4;
     }
+    else if ([p_btnTask isEqualToString:@"Back"]) 
+    {
+        retBtn = [[UIBarButtonItem alloc] initWithTitle:p_btnTask style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
+        retBtn.tag = 3;
+    }
+    else if ([p_btnTask isEqualToString:@"Sel"]) 
+    {
+        retBtn = [[UIBarButtonItem alloc] initWithTitle:p_btnTask style:UIBarButtonItemStylePlain target:self action:@selector(ButtonPressed:)];
+        retBtn.tag = 6;
+    }
     /*else if ([p_btnTask isEqualToString:@"Refresh"]) 
     {
         retBtn = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(ButtonPressed:)];
@@ -162,24 +207,42 @@
     UIBarButtonItem *recdBtn = (UIBarButtonItem*) sender;
     switch (recdBtn.tag) {
         case 0: //refresh button pressed
-            //notifyInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"List",@"data", nil];
             currMode = @"L";
             [positemSelect refreshData:nil];
             break;
         case 1: // Add button clicked
-            currMode = @"I";
-            [positemSelect addNewItem];
+            if ([currMode isEqualToString:@"CL"]) 
+            {
+                currMode = @"CI";
+                [positemSelect addNewCategory];
+            }
+            else
+            {
+                currMode = @"I";
+                [positemSelect addNewItem];
+            }
             break;
         case 2:  // edit button clicked
-            notifyInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"Edit",@"data", nil];
+            //notifyInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"Edit",@"data", nil];
+            currMode = @"E";
+            [positemSelect editItem:nil];
             break;
         case 3:
-            currMode = @"L";
-            [positemSelect cancelItemUpdation];
+            if ([currMode isEqualToString:@"CL"]) 
+                [positemSelect cancelCategorySelection];
+            else if ([currMode isEqualToString:@"CI"] | [currMode isEqualToString:@"CE"] )
+            {
+                [positemSelect cancelCategoryAddUpdation];
+                currMode = @"CL";
+            }
+            else
+                [positemSelect cancelItemUpdation];
             break;
         case 4:
-            //notifyInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"Save",@"data", nil];
-            [positemSelect updateItem];
+            if ([currMode isEqualToString:@"CI"] | [currMode isEqualToString:@"CE"]) 
+                [positemSelect addUpdateCategory];
+            else
+                [positemSelect updateItem];
             break;
         case 5:
             notifyInfo = [[NSDictionary alloc] initWithObjectsAndKeys:@"Refresh",@"data", nil];
@@ -190,13 +253,37 @@
     [self setButtonsForDiffMode];
 }
 
-- (void) controllerNotification:(NSNotification*) notifyInfo
+- (void) controllerNotification:(NSDictionary*) notifyInfo
 {
-    NSString *recdMode = [[notifyInfo userInfo] valueForKey:@"data"];
+    NSString *recdMode = [notifyInfo valueForKey:@"data"];
     
     if ([recdMode isEqualToString:@"List"]) 
     {
         currMode = @"L";
+        [self setButtonsForDiffMode];
+    }
+    
+    if ([recdMode isEqualToString:@"Insert"]) 
+    {
+        currMode = @"I";
+        [self setButtonsForDiffMode];
+    }
+
+    if ([recdMode isEqualToString:@"Edit"]) 
+    {
+        currMode = @"E";
+        [self setButtonsForDiffMode];
+    }
+
+    if ([recdMode isEqualToString:@"CatList"]) 
+    {
+        currMode = @"CL";
+        [self setButtonsForDiffMode];
+    }
+    
+    if ([recdMode isEqualToString:@"CatEdit"]) 
+    {
+        currMode = @"CE";
         [self setButtonsForDiffMode];
     }
 }

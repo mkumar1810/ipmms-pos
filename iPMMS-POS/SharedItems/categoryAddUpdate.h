@@ -8,16 +8,20 @@
 
 #import <UIKit/UIKit.h>
 #import "baseSearchForm.h"
+#import "posFunctions.h"
 
-@interface categoryAddUpdate :baseSearchForm <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
+@interface categoryAddUpdate :baseSearchForm <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, posFunctions>
 {
     NSString *_notificationName, *_proxynotification, *_webdataName;
     UITextField *txtCatCode, *txtCatName;
     UIColor *bgcolor;
     UIColor *lblTextColor;
+    NSString *currMode;
+    NSDictionary *_initDict;
 }
 
 - (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification;
+- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification forEditData:(NSDictionary*) p_initData;
 - (BOOL) validateData;
 - (BOOL) emptyCheckResult:(UITextField*) p_passField andMessage:(NSString*) p_errMsg;
 - (void) showAlertMessage:(NSString *) dispMessage;

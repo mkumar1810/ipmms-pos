@@ -18,12 +18,15 @@
     NSMutableString *respcode, *respmessage;
     NSMutableDictionary *resultDataStruct;
     NSMutableArray *dictData;
-    NSString *_notificationName;
+    //NSString *_notificationName;
     NSDictionary *inputParms;
     BOOL _returnInputsAlso;
+    NSString *MAIN_URL;
+    METHODCALLBACK _postProxyResult;
 }
 
-- (id) initWithReportType:(NSString*) resultType andInputParams:(NSDictionary*) prmDict andNotificatioName:(NSString*) notificationName;
+//- (id) initWithReportType:(NSString*) resultType andInputParams:(NSDictionary*) prmDict andNotificatioName:(NSString*) notificationName;
+- (id) initWithReportType:(NSString*) resultType andInputParams:(NSDictionary*) prmDict andResponseMethod:(METHODCALLBACK) p_methodCallback;
 - (void) generateData;
 - (void) showAlertMessage:(NSString *) dispMessage;
 - (void) processAndReturnXMLMessage;

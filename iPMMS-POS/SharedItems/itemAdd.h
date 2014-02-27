@@ -14,7 +14,8 @@
 
 @interface itemAdd : baseSearchForm <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, posFunctions>
 {
-    NSString *_notificationName, *_proxynotification, *_webdataName;
+    CGPoint scrollOffset;
+    NSString /**_notificationName, *_proxynotification,*/ *_webdataName;
     UITextField *txtItemName, *txtItemPrice, *txtItemCode, *txtCategoryName;
     int _categoryId;
     UIColor *bgcolor;
@@ -26,10 +27,12 @@
     NSDictionary *_itemDict;
     posWSProxy *posCoreCall;
     NSMutableArray *recdItemArray;
+    METHODCALLBACK _controllerCallBack;
+    
 }
 
-- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification;
-- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation andNotification:(NSString*) p_notification forEditData:(NSDictionary*) p_initData;
+- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation withControllerCallback:(METHODCALLBACK) p_controllerCallBack;
+- (id)initWithFrame:(CGRect)frame forOrientation:(UIInterfaceOrientation) p_intOrientation  forEditData:(NSDictionary*) p_initData withControllerCallback:(METHODCALLBACK) p_controllerCallBack;
 - (BOOL) validateData;
 - (BOOL) emptyCheckResult:(UITextField*) p_passField andMessage:(NSString*) p_errMsg;
 - (void) showAlertMessage:(NSString *) dispMessage;
@@ -38,6 +41,8 @@
 - (UITableViewCell*) getLocationPriceHeaderCell;
 - (UITableViewCell*) getLocationPriceCell:(int) p_rowno;
 - (NSString *)htmlEntitycode:(NSString *)string;
-
+- (void) posItemDataGenerated : (NSDictionary*) p_posItemInfo;
+- (void) posCategorySelected : (NSDictionary*) catSelectInfo;
+- (void) setTextFieldFocus:(int) p_focusTag;
 
 @end

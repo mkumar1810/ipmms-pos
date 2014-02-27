@@ -44,6 +44,11 @@
         actIndicator.hidden = NO;
         actIndicator.hidesWhenStopped = YES;
         [actIndicator startAnimating];
+        NSUserDefaults *stdDefaults = [NSUserDefaults standardUserDefaults];
+        if ([stdDefaults valueForKey:@"LOCATIONSERVER"]) 
+            MAIN_URL = [[NSString alloc] initWithFormat:@"http://%@/", [stdDefaults valueForKey:@"LOCATIONSERVER"]];
+        else
+            MAIN_URL = [[NSString alloc] initWithFormat:@"%@", HO_URL];
         [self generatePrintView];
     }
     return  self;
@@ -157,7 +162,7 @@
 
 - (IBAction) goBack:(id) sender
 {
-    //[[NSNotificationCenter defaultCenter] postNotificationName:_notificationName object:self];
+    //[[NSNotifxicationCenter defaultCenter] postNotificationName:_notificationName object:self];
 }
 
 - (IBAction) printContents:(id) sender

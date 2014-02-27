@@ -19,6 +19,15 @@
 - (void) generateTableView;
 - (id) getButtonForNavigation:(NSString*) p_btnTask;
 - (void) setButtonsForDiffMode;
+- (void) addNewItem;
+- (void) addNewCategory;
+- (void) editItem:(NSDictionary*) p_itemDict;
+- (void) cancelItemUpdation;
+- (void) updateItem;
 - (void) posItemSelectedInSearch:(NSDictionary*) p_itemDict;
+- (void) cancelCategorySelection;
+- (void) displayDataForList;
+- (void) addUpdateCategory;
+- (void) cancelCategoryAddUpdation;
 
 @end

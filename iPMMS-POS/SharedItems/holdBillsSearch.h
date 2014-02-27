@@ -13,12 +13,14 @@
 @interface holdBillsSearch : baseSearchForm <UITableViewDataSource, UITableViewDelegate>
 {
     int refreshTag;
-    NSString *_notificationName, *_proxynotification, *_webdataName, *_cacheName,*_gobacknotifyName;
+    NSString /**_notificationName, *_proxynotification,*/ *_webdataName, *_cacheName /*,*_gobacknotifyName*/;
     NSString *currMode;
     BOOL isSplitMode;
     NSDictionary *selectedItem;
+    
 }
 
-- (id)initWithDataNotification:(NSString*) p_datanotification;
+//- (id)initWithDataNotification:(NSString*) p_datanotification;
 - (NSDictionary*) returnSelectedItem;
+- (void) holdBillsListDataGenerated:(NSDictionary *)generatedInfo;
 @end
